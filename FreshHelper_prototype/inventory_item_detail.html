@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Fresh Helper</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+
+    <!-- Static으로 변환 필요 -->
+    <link href="css/styles.css" rel="stylesheet" />
+
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+    <!-- 네이버 지도 API api key 가릴 필요 있음 -->
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=f4tc04m6yg"></script>
+  </head>
+  <body class="sb-nav-fixed">
+    <!-- ##########nav & Sidenav_nav는 index에서 보관########## -->
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+      <!-- Navbar Brand-->
+
+      <!--##########링크변환필요##########-->
+      <a class="navbar-brand ps-3" href="index.html">Fresh Helper</a>
+
+      <!-- Sidebar Toggle-->
+      <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+      <!-- Navbar Search-->
+      <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        <div class="input-group">
+          <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+          <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+        </div>
+      </form>
+      <!-- Navbar-->
+      <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#!">Settings</a></li>
+            <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#!">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div id="layoutSidenav">
+      <div id="layoutSidenav_nav">
+        <!--Side nav-->
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+          <div class="sb-sidenav-menu">
+            <div class="nav">
+              <!--Dashboard-->
+              <div class="sb-sidenav-menu-heading">Home</div>
+
+              <!--링크 변경 필요-->
+              <a class="nav-link" href="index.html">
+                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                Dashboard
+              </a>
+              <!--inventory / warehouse-->
+              <div class="sb-sidenav-menu-heading">Inventory / Warehouse</div>
+
+              <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInventory" aria-expanded="false" aria-controls="collapseInventory">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                재고 ( Inventory )
+                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+              </a>
+              <div class="collapse" id="collapseInventory" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav accordion">
+                  <!--링크 변경 필요-->
+                  <a class="nav-link" href="product_setting.html">Product Setting</a>
+                  <a class="nav-link" href="inventory_detail.html">Current Inventory</a>
+                  <a class="nav-link" href="warehousing.html">Warehousing (입고)</a>
+                  <a class="nav-link" href="shipping.html">Shipping (출고)</a>
+                </nav>
+              </div>
+              <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseWarehouse" aria-expanded="false" aria-controls="collapseWarehouse">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-warehouse"></i></div>
+                창고 ( Warehouse )
+                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+              </a>
+              <div class="collapse" id="collapseWarehouse" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav accordion">
+                  <!--링크 변경 필요-->
+                  <a class="nav-link" href="">Warehouse setting</a>
+                  <a class="nav-link" href="warehousemap.html">Warehouse Map</a>
+                </nav>
+              </div>
+              <!--Expectation-->
+              <div class="sb-sidenav-menu-heading">Expectation</div>
+              <!--링크 변경 필요-->
+              <a class="nav-link" href="index.html">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-seedling"></i></div>
+                작물 추천<br />(Recommendation)
+              </a>
+              <!--링크 변경 필요-->
+              <a class="nav-link" href="index.html">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                History
+              </a>
+            </div>
+          </div>
+          <div class="sb-sidenav-footer">
+            <div class="small">Logged in as:</div>
+            <!-- 로그인 회원 정보 -->
+            박기윤
+          </div>
+        </nav>
+      </div>
+      <div id="layoutSidenav_content">
+        <!-- 
+            대쉬보드 화면
+            Django로 구현 시 <main> 하위 항목들은 dashboard.html에 상속
+        -->
+        <main>
+          <div class="container-fluid">
+            <!--Dash Title-->
+            <div class="px-3 py-4">
+              <!--링크 수정 요함-->
+              <p><a href="inventory_detail.html" style="text-decoration-line: none">Inventory</a> / <a href="#" style="text-decoration-line: none">Item Detail</a></p>
+              <h1 class="fw-bold">Item Detail Information</h1>
+              <hr />
+              <button class="mt-2 btn btn-outline-secondary"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+            </div>
+
+            <div class="p-3 pt-5 bg-light">
+              <!--상품 개요-->
+              <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                  <div class="card mb-4 shadow" style="height: 95%">
+                    <div class="card-header">
+                      <i class="fas fa-chart-bar me-1"></i>
+                      상품 정보
+                    </div>
+                    <div class="card-body">
+                      <h3 class="fw-bold mb-3">상품 정보</h3>
+                      <p class="">
+                        <b>작물명</b> : 사과 <br />
+                        <b>상품 형태</b> : 박스 포장 <br />
+                        <b>원산지</b> : 청송 <br />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                  <div class="card mb-4 shadow" style="height: 95%">
+                    <div class="card-header">
+                      <i class="fas fa-chart-bar me-1"></i>
+                      가격 정보
+                    </div>
+                    <div class="card-body">
+                      <h3 class="fw-bold mb-3">가격 정보</h3>
+                      <p class="">
+                        <b>구매가격</b> : 00000원 <br />
+                        <b>판매가격</b> : 00000원
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-sm-6 col-xs-12">
+                  <div class="card mb-4 shadow" style="height: 95%">
+                    <div class="card-header">
+                      <i class="fas fa-chart-bar me-1"></i>
+                      창고 정보
+                    </div>
+                    <div class="card-body">
+                      <h3 class="fw-bold mb-3">창고 정보</h3>
+                      <p class="">
+                        <b>보관 창고</b> : 00창고 <br />
+                        <br />
+                        <b>창고 주소</b> : 경기도 00시 00군 00로 0000<br />
+                        <b>창고 형태</b> : 냉동 <br />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                  <div class="card mb-4 shadow" style="height: 95%">
+                    <div class="card-header">
+                      <i class="fas fa-chart-bar me-1"></i>
+                      보관 정보
+                    </div>
+                    <div class="card-body">
+                      <h3 class="fw-bold mb-3">보관 정보</h3>
+                      <p>
+                        <b>재고량</b> : 100개 <br />
+                        <b>보관시작</b> : 0000년 00월 00일 <br />
+                        <b>유통기한</b> : 0000년 00월 00일 <br />
+                        <br />
+                        <b>보관 기간</b> : 최대 00일 <br />
+                        <b>보관 방법</b> : 냉장, 냉동, 실온 <br />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <!--소매 가격 변동 그래프-->
+                <div class="col-md-5 col-sm-12">
+                  <div class="card mb-4 shadow" style="height: 95%">
+                    <div class="card-header">
+                      <i class="fas fa-chart-area me-1"></i>
+                      과일 소매 시세
+                    </div>
+                    <div class="card-body p-4">
+                      <!--이용자가 설정할 수 있게 만들기-->
+                      <h5 class="fw-bold mb-3">사과 소매 시장가격</h5>
+                      <canvas id="myAreaChart" width="757" height="300" class="chartjs-render-monitor" style="display: block; width: 757px; height: 300px"></canvas>
+                    </div>
+                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                  </div>
+                </div>
+                <!--창고 재고 정보-->
+                <div class="col-md-7 col-sm-12">
+                  <div class="card mb-4 shadow" style="height: 95%">
+                    <div class="card-header">
+                      <i class="fas fa-chart-bar me-1"></i>
+                      보관 창고 위치
+                    </div>
+                    <div class="card-body">
+                      <h5 class="fw-bold">00창고</h5>
+                      <!--네이버 지도-->
+                      <div id="map" style="width: 100%; height: 85%"></div>
+                    </div>
+                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+          <div class="container-fluid px-4">
+            <div class="d-flex align-items-center justify-content-between small">
+              <div class="text-muted">Copyright &copy; 박기윤 2024</div>
+              <div>
+                <a href="#">Privacy Policy</a>
+                &middot;
+                <a href="#">Terms &amp; Conditions</a>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- 지도 설정 -->
+    <script>
+      var mapOptions = {
+        center: new naver.maps.LatLng(37.3595704, 127.105399),
+        zoom: 10,
+      };
+
+      var map = new naver.maps.Map("map", mapOptions);
+
+      var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3595704, 127.105399),
+        map: map,
+      });
+
+      var contentString = ['<div class="p-2">', "<h3>00창고</h3>", "<p>00시 00동 00길 00 0000창고<br/>형태: 냉동창고<br/>용량: 00CBM</p>", "</div>"].join("");
+
+      var infowindow = new naver.maps.InfoWindow({
+        content: contentString,
+      });
+
+      naver.maps.Event.addListener(marker, "click", function (e) {
+        if (infowindow.getMap()) {
+          infowindow.close();
+        } else {
+          infowindow.open(map, marker);
+        }
+      });
+    </script>
+    <!--템플릿 scripts-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <!--Chart.js CDN-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <!--to input Datas into the charts-->
+    <script src="assets/inventory_chart/warehouse_pie.js"></script>
+    <script src="assets/inventory_chart/inventory_bar.js"></script>
+    <script src="assets/inventory_chart/selling_chart.js"></script>
+    <script src="assets/demo/chart-area-demo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
+  </body>
+</html>

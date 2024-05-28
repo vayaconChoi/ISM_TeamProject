@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Fresh Helper</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+
+    <!-- Static으로 변환 필요 -->
+    <link href="css/styles.css" rel="stylesheet" />
+
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+    <!-- 네이버 지도 API api key 가릴 필요 있음 -->
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=f4tc04m6yg"></script>
+  </head>
+  <body class="sb-nav-fixed">
+    <!-- ##########nav & Sidenav_nav는 index에서 보관########## -->
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+      <!-- Navbar Brand-->
+
+      <!--##########링크변환필요##########-->
+      <a class="navbar-brand ps-3" href="index.html">Fresh Helper</a>
+
+      <!-- Sidebar Toggle-->
+      <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+      <!-- Navbar Search-->
+      <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        <div class="input-group">
+          <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+          <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+        </div>
+      </form>
+      <!-- Navbar-->
+      <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#!">Settings</a></li>
+            <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#!">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div id="layoutSidenav">
+      <div id="layoutSidenav_nav">
+        <!--Side nav-->
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+          <div class="sb-sidenav-menu">
+            <div class="nav">
+              <!--Dashboard-->
+              <div class="sb-sidenav-menu-heading">Home</div>
+
+              <!--링크 변경 필요-->
+              <a class="nav-link" href="index.html">
+                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                Dashboard
+              </a>
+              <!--inventory / warehouse-->
+              <div class="sb-sidenav-menu-heading">Inventory / Warehouse</div>
+
+              <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInventory" aria-expanded="false" aria-controls="collapseInventory">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                재고 ( Inventory )
+                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+              </a>
+              <div class="collapse" id="collapseInventory" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav accordion">
+                  <!--링크 변경 필요-->
+                  <a class="nav-link" href="product_setting.html">Product Setting</a>
+                  <a class="nav-link" href="inventory_detail.html">Current Inventory</a>
+                  <a class="nav-link" href="warehousing.html">Warehousing (입고)</a>
+                  <a class="nav-link" href="shipping.html">Shipping (출고)</a>
+                </nav>
+              </div>
+              <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseWarehouse" aria-expanded="false" aria-controls="collapseWarehouse">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-warehouse"></i></div>
+                창고 ( Warehouse )
+                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+              </a>
+              <div class="collapse" id="collapseWarehouse" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <nav class="sb-sidenav-menu-nested nav accordion">
+                  <!--링크 변경 필요-->
+                  <a class="nav-link" href="">Warehouse setting</a>
+                  <a class="nav-link" href="warehousemap.html">Warehouse Map</a>
+
+                </nav>
+              </div>
+              <!--Expectation-->
+              <div class="sb-sidenav-menu-heading">Expectation</div>
+              <!--링크 변경 필요-->
+              <a class="nav-link" href="index.html">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-seedling"></i></div>
+                작물 추천<br />(Recommendation)
+              </a>
+              <!--링크 변경 필요-->
+              <a class="nav-link" href="index.html">
+                <div class="sb-nav-link-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                History
+              </a>
+            </div>
+          </div>
+          <div class="sb-sidenav-footer">
+            <div class="small">Logged in as:</div>
+            <!-- 로그인 회원 정보 -->
+            박기윤
+          </div>
+        </nav>
+      </div>
+      <div id="layoutSidenav_content">
+        <!-- 
+            대쉬보드 화면
+            Django로 구현 시 <main> 하위 항목들은 dashboard.html에 상속
+        -->
+        <main>
+          <!--Dash Title-->
+          <div class="container-fluid">
+            <div class="px-3 py-4">
+                <p><a href="inventory_detail.html" style="text-decoration-line: none">Inventory</a> / <a href="#" style="text-decoration-line: none">Warehousing</a></p>
+                <h1 class="fw-bold">Shipping Product (상품 출고)</h1>
+              <hr />
+              <p>바코드를 스캔하거나 직접 입력하여 입고를 관리하세요.</p>
+              <a href="product_setting.html" class="mt-2 btn btn-outline-secondary"><i class="fa-solid fa-backward"></i> back</a>
+            </div>
+
+            <div class="p-5 pt-5 bg-light">
+                <div class="row">
+                    <!-- 재고 입고 화면 -->
+                    <div class="col-xl-7 col-md-12 mb-4">
+                        <div class="card shadow" style="height: 100%;">
+                          <div class="card-body">
+                            <h3><b>상품 출고하기</b></h3>
+                                <!--if 조회된 상품이 없음-->
+                                <form method="post" class="my-3">
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
+                                    
+                                    </div>
+                                    <div class="col-8">
+                                      <div class="input-group">
+                                        <input type="text" name="barcode" id="barcodeInput" class="form-control " placeholder="바코드를 스캔하거나 직접 입력하세요."/>
+                                        <button type="submit" class="btn btn-primary" onclick="alert('중품 사과, 원산지:청송')">상품조회</button>
+                                    
+                                      </div> 
+                                    </div> 
+                                  </div> 
+                                </form>
+                                <!--else-->
+                                <div class="row">
+                                  <div class="mb-3"><b>바코드: </b>000000000<br><b>상품명: </b>중품사과</div>
+                                  <div class="col-auto mb-3">
+                                    <button class="btn btn-outline-primary">상품 수정</button>
+                                  </div>
+                                </div>
+                                <select class="form-select mb-2" name="" id="selectFruit">
+                                  <option selected>출고 창고를 선택하세요</option>
+                                  <option value="yongin-ref">용인 냉장창고</option>
+                                  <option value="seoul-fro">서울 냉동창고</option>
+                                </select>
+                                <form method="post" class="py-1">
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="release-time" class="form-label"><b>출고 시각</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                      <input type="datetime-local" name="release-time" id="release-time" class="form-control">
+                                    </div> 
+                                  </div>
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="release-quantity" class="form-label"><b>출고 수량</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                      <input type="number" name="release-quantity" id="release-quantity" class="form-control">
+                                    </div>
+                                    <div class="col-auto">
+                                      <span id="passwordHelpInline" class="form-text">
+                                        박스 단위로 입력하세요. <br> 바코드를 스캔하는 만큼 수량이 증가합니다.
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="release-price" class="form-label"><b>출고 가격</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                      <input type="number" name="release-price" id="release-price" class="form-control">
+                                    </div> 
+                                  </div>
+                                  <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-success">출고</button>
+                                  </div>
+                                  
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 재고 출고 현황 -->
+                    <div class="col-xl-5 col-md-12 mb-4">
+                      <div class="card shadow" style="height:100%">
+                        <div class="card-body">
+                          <h3><b>00월 출고 비율</b></h3>
+                          <canvas id="WarehousePie" width="100%"height="70px"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="card mb-4 shadow">
+                        <div class="card-header">
+                          <i class="fas fa-chart-bar me-1"></i>
+                                출고 History
+                        </div>
+                        <div class="card-body">
+                          <h3><b>과거 출고내역</b></h3>
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th>출고번호</th>
+                                <th>과일명</th>
+                                <th>바코드</th>
+                                <th>출고시각</th>
+                                <th>매입가</th>
+                                <th>출고량</th>
+                                <th>수정</th>
+                                <th>삭제</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>24050001</th>
+                                <th>중품 사과</th>
+                                <th>0000000000</th>
+                                <th>2024-05-08</th>
+                                <th>24,000</th>
+                                <th>300박스</th>
+                                <th><a href="shipping_edit.html" class="btn btn-outline-primary ">Edit</a></th>
+                                <th><a href="" class="btn btn-outline-danger ">delete</a></th>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+          <div class="container-fluid px-4">
+            <div class="d-flex align-items-center justify-content-between small">
+              <div class="text-muted">Copyright &copy; 박기윤 2024</div>
+              <div>
+                <a href="#">Privacy Policy</a>
+                &middot;
+                <a href="#">Terms &amp; Conditions</a>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- 지도 설정 -->
+    <script>
+      var mapOptions = {
+        center: new naver.maps.LatLng(37.3595704, 127.105399),
+        zoom: 10,
+      };
+
+      var map = new naver.maps.Map("map", mapOptions);
+
+      var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3595704, 127.105399),
+        map: map,
+      });
+
+      var contentString = ['<div class="p-2">', "<h3>00창고</h3>", "<p>00시 00동 00길 00 0000창고<br/>형태: 냉동창고<br/>용량: 00CBM</p>", "</div>"].join("");
+
+      var infowindow = new naver.maps.InfoWindow({
+        content: contentString,
+      });
+
+      naver.maps.Event.addListener(marker, "click", function (e) {
+        if (infowindow.getMap()) {
+          infowindow.close();
+        } else {
+          infowindow.open(map, marker);
+        }
+      });
+    </script>
+    <!--템플릿 scripts-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <!--Chart.js를 사용하기 위한 CDN-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="assets/inventory_chart/warehouse_pie.js"></script>
+    <script src="assets/demo/chart-area-demo.js"></script>
+    <script src="assets/demo/chart-bar-demo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
+  </body>
+</html>
