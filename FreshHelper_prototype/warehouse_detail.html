@@ -112,7 +112,7 @@
           <!--Dash Title-->
           <div class="container-fluid">
             <div class="px-3 py-4">
-                <p><a href="warehousemap.html" style="text-decoration-line: none">Warehouse</a>/Detail</p>
+                <p><a href="warehousemap.html" style="text-decoration-line: none">Warehouse</a> / Detail</p>
                 <h1 class="fw-bold">Detail of warehouse (창고 상세정보)</h1>
               <hr />
             </div> 
@@ -145,10 +145,31 @@
                         <div class="card shadow" style="height: 100%">
                             <div class="card-header">
                                 <i class="fas fa-chart-bar me-1"></i>
-                                00창고 재고 현황
+                                00창고 재고 현황표
                             </div>
                             <div class="card-body">
-                                <canvas id="WarehousePie" width="100%" height="60"></canvas>
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>입고ID</th>
+                                    <th>작물명</th>
+                                    <th>보관시작기간</th>
+                                    <th>유통기한</th>
+                                    <th>재고량</th>
+                                    <th>상세보기</th><!--상세보기는 inventory_item_detail.html로 이어짐-->
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <th>0000000000</th>
+                                    <th>중품 사과</th>
+                                    <th>2024-05-10</th>
+                                    <th>2024-08-30</th>
+                                    <th>100</th>
+                                    <th><a class="btn btn-primary m-1" href="inventory_item_detail.html">Detail</a></th>
+                                  </tr>
+                                </tbody>
+                              </table>
                             </div>
                         </div>
                     </div>
