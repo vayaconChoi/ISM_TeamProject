@@ -3,5 +3,5 @@ from dashboard import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("/inventory", views.inventory, name="inventory"),
+    path("inventory", views.inventory, name="inventory"),
 ]
