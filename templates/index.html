@@ -21,7 +21,7 @@
           </div>
           <div class="card-body p-4">
             <!--네이버 지도-->
-            <div id="map" style="width: 100%; height: 100%"></div>
+            <div id="map" style="width: 100%; height: 300px"></div>
           </div>
         </div>
       </div>
@@ -33,15 +33,8 @@
             과일 소매 시세
             </div>
             <div class="card-body p-4" style="height: 100%">
-            <!--이용자가 설정할 수 있게 만들기-->
-                <h5 class="fw-bold mb-3">사과 소매 시세</h5>
-                <canvas
-                    id="myAreaChart"
-                    width="757"
-                    height="300"
-                    class="chartjs-render-monitor"
-                    style="display: block; width: 757px; height: 300px"
-                ></canvas>
+                <!--이용자가 설정할 수 있게 만들기-->
+                {% include 'component/retail_price.html' %}
             </div>
         </div>
       </div>
@@ -187,7 +180,6 @@
 <!-- 차트 Script -->
 {% block chart-script %} {% load static %}
 <script src="{% static 'js/demo/chart-bar-demo.js' %}"></script>
-<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
 <script
   src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
   crossorigin="anonymous"

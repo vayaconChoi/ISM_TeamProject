@@ -29,6 +29,12 @@
       type="text/javascript"
       src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=f4tc04m6yg"
     ></script>
+      
+    <!--Chart.js를 사용하기 위한 CDN-->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body class="sb-nav-fixed">
     <!-- ##########nav & Sidenav_nav는 base.html에서 보관########## -->
@@ -197,13 +203,10 @@
     ></script>
     <script src="{% static 'js/scripts.js' %}"></script>
 
-    <!--Chart.js를 사용하기 위한 CDN-->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-      crossorigin="anonymous"
-    ></script>
+    
 
     <!-- 차트 Script -->
     {% block chart-script %} {% endblock %}
+    {% block component-script %} {% endblock %}
   </body>
 </html>
