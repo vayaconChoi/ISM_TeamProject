@@ -91,3 +91,11 @@
   </div>
 </main>
 {% endblock %}
+
+<!-- 차트 Script -->
+{% block chart-script %} {% load static %}
+    <!-- 재고변화 그래프 -->
+    <script src="{% static 'js/inventory_chart/selling_chart.js' %}" ></script>
+    <!-- 재고 현황 pie chart -->
+    <script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>
+{% endblock %}

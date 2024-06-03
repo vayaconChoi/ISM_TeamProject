@@ -46,3 +46,7 @@
 
         </main>
 {% endblock %}
+
+{% block chart-script %}{% load static %}
+<script src="{% static 'js/prediction_chart/predict_chart.js' %}"></script>
+{% endblock %}
