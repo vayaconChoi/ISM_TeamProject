@@ -51,36 +51,9 @@
               창고 별 재고현황
             </div>
             <div class="card-body">
-              <h5 class="fw-bold">판매자 재고 현황</h5>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>창고명</th>
-                    <th>작물명</th>
-                    <th>보관시작기간</th>
-                    <th>유통기한</th>
-                    <th>재고량</th>
-                    <th>상세보기</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th>00창고</th>
-                    <th>사과</th>
-                    <th>2024-05-10</th>
-                    <th>2024-08-30</th>
-                    <th>100</th>
-                    <th>
-                      <a
-                        class="btn btn-primary m-1"
-                        href="inventory/1"
-                        >Detail</a
-                      >
-                    </th>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <!-- 재고 총합 테이블 상속 -->
+            {% include 'component/inventory_total_table.html' %}
+              </div>
             <div class="card-footer small text-muted">
               Updated yesterday at 11:59 PM
             </div>
