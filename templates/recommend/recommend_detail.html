@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block main-content %}
+        <main>
+          <!--Dash Title-->
+          <div class="container-fluid">
+            <div class="px-3 py-4">
+                <p><a href="/recommend" style="text-decoration-line: none">Recommendation</a> / Detail</p>
+                <h1 class="fw-bold">예측 결과</h1>
+              <hr />
+            </div> 
+
+            <div class="p-5 pt-5 bg-light">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <h1 class="fw-bold">충주 중품(中) 사과</h1>
+                            </div>
+                        </div>
+                    </div>
+                  <div class="col-xl-4 col-md-12 mb-4">
+                    <div class="card shadow" style="height: 100%;">
+                        <div class="card-body">
+                            <h2 class="fw-bold mb-2">결과 요약</h2> 
+                            <hr>
+                            <div class="container mt-3">
+                                <p><b>매입 추천 작물 : </b>중품 사과</p>
+                                <p><b>원산지 : </b>충주</p>
+                                <p><b>입고 창고 : </b>대전창고</p>
+                                <p><b>추천 판매시기 : </b>20일 뒤</p>
+                            </div>           
+                        </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-8 col-md-12 mb-4">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h2 class="fw-bold mb-2">소매시세 예측 결과</h2>
+                            <hr>
+                            <canvas id="predicted_price_chart"></canvas>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+        </main>
+{% endblock %}

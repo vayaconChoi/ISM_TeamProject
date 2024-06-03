@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block main-content %}
+        <main>
+          <!--Dash Title-->
+          <div class="container-fluid">
+            <div class="px-3 py-4">
+              <p><a href="/inventory" style="text-decoration-line: none">Inventory</a> / <a href="/warehousing" style="text-decoration-line: none">Warehousing</a> / <a href="#" style="text-decoration-line: none">Warehousing Edit</a></p>
+              <h1 class="fw-bold">Warehousing Edit (상품 입고 정보 수정)</h1>
+              <hr />
+              <p>기존 입력했던 입고 정보를 수정하세요.</p>
+              <a href="/warehousing" class="mt-2 btn btn-outline-secondary"><i class="fa-solid fa-backward"></i> back</a>
+            </div>
+
+            <div class="p-5 pt-5 bg-light">
+              <div class="row">
+                <!-- 입고 수정 화면 -->
+                <div class="col-12">
+                  <div class="card mb-4 shadow">
+                    <div class="card-header"><i class="fas fa-chart-bar me-1"></i>입고 내역 수정</div>
+                    <div class="card-body">
+                      <!-- if 바코드수정 is clicked -->
+                      <form method="post" class="my-3">
+                        <div class="row g-3 align-items-center mb-3">
+                          <div class="col-auto">
+                            <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
+                          </div>
+                          <div class="col-8">
+                            <div class="input-group">
+                              <input type="text" name="barcode" id="barcodeInput" class="form-control" placeholder="바코드를 스캔하거나 직접 입력하세요." />
+                              <button type="submit" class="btn btn-primary" onclick="alert('중품 사과, 원산지:청송')">상품조회</button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+
+                      <!-- if not clicked "바코드수정" -->
+                      <div class="row">
+                        <div class="mb-3"><b>바코드: </b>000000000<br /><b>상품명: </b>중품사과</div>
+                        <div class="col-auto mb-3">
+                          <button class="btn btn-outline-primary">바코드 수정</button>
+                        </div>
+                      </div>
+                      <!-- 변경 내용 Form (내용은 미리 입력 되어있음) -->
+                      <form method="post" class="py-1">
+                        <select class="form-select mb-3" name="" id="selectFruit">
+                          <option selected>입고 창고를 선택하세요</option>
+                          <option value="yongin-ref">용인 냉장창고</option>
+                          <option value="seoul-fro">서울 냉동창고</option>
+                        </select>
+                        <div class="row g-3 align-items-center mb-3">
+                          <div class="col-auto">
+                            <label for="inbound-time" class="form-label"><b>입고 시각</b></label>
+                          </div>
+                          <div class="col-auto">
+                            <input type="datetime-local" name="inbound-time" id="inbound-time" class="form-control" />
+                          </div>
+                        </div>
+                        <div class="row g-3 align-items-center mb-3">
+                          <div class="col-auto">
+                            <label for="inbound-quantity" class="form-label"><b>입고 수량</b></label>
+                          </div>
+                          <div class="col-auto">
+                            <input type="number" name="inbound-quantity" id="inbound-quantity" class="form-control" />
+                          </div>
+                          <div class="col-auto">
+                            <span id="passwordHelpInline" class="form-text">
+                              박스 단위로 입력하세요. <br />
+                              바코드를 스캔하는 만큼 수량이 증가합니다.
+                            </span>
+                          </div>
+                        </div>
+                        <div class="row g-3 align-items-center mb-3">
+                          <div class="col-auto">
+                            <label for="inbound-price" class="form-label"><b>입고 가격</b></label>
+                          </div>
+                          <div class="col-auto">
+                            <input type="number" name="inbound-price" id="inbound-price" class="form-control" />
+                          </div>
+                        </div>
+                        <div class="d-flex flex-row-reverse">
+                          <button type="submit" class="btn btn-success">수정 완료</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+{% endblock %}

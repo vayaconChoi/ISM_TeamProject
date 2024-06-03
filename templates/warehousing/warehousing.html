@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block main-content %}
+        <main>
+          <!--Dash Title-->
+          <div class="container-fluid">
+            <div class="px-3 py-4">
+                <p><a href="/inventory" style="text-decoration-line: none">Inventory</a> / <a href="#" style="text-decoration-line: none">Warehousing</a></p>
+                <h1 class="fw-bold">Warehousing Product (상품 입고)</h1>
+              <hr />
+              <p>바코드를 스캔하거나 직접 입력하여 입고를 관리하세요.</p>
+              <a href="/inventory" class="mt-2 btn btn-outline-secondary"><i class="fa-solid fa-backward"></i> back</a>
+            </div>
+
+            <div class="p-5 pt-5 bg-light">
+                <div class="row">
+                    <!-- 재고 입고 화면 -->
+                    <div class="col-xl-7 col-md-12 mb-4">
+                        <div class="card shadow" style="height: 100%;">
+                          <div class="card-body">
+                            <h3><b>상품 입고하기</b></h3>
+                                <!--if 조회된 상품이 없음-->
+                                <form method="post" class="my-3">
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
+                                    
+                                    </div>
+                                    <div class="col-8">
+                                      <div class="input-group">
+                                        <input type="text" name="barcode" id="barcodeInput" class="form-control " placeholder="바코드를 스캔하거나 직접 입력하세요."/>
+                                        <button type="submit" class="btn btn-primary" onclick="alert('중품 사과, 원산지:청송')">상품조회</button>
+                                    
+                                      </div> 
+                                    </div> 
+                                  </div> 
+                                </form>
+                                <!--else-->
+                                <div class="row">
+                                  <div class="mb-3"><b>바코드: </b>000000000<br><b>상품명: </b>중품사과</div>
+                                  <div class="col-auto mb-3">
+                                    <button class="btn btn-outline-primary">상품 수정</button>
+                                  </div>
+                                </div>
+                                <select class="form-select mb-2" name="" id="selectFruit">
+                                  <option selected>입고 창고를 선택하세요</option>
+                                  <option value="yongin-ref">용인 냉장창고</option>
+                                  <option value="seoul-fro">서울 냉동창고</option>
+                                </select>
+                                <form method="post" class="py-1">
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="inbound-time" class="form-label"><b>입고 시각</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                      <input type="datetime-local" name="inbound-time" id="inbound-time" class="form-control">
+                                    </div> 
+                                  </div>
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="inbound-quantity" class="form-label"><b>입고 수량</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                      <input type="number" name="inbound-quantity" id="inbound-quantity" class="form-control">
+                                    </div>
+                                    <div class="col-auto">
+                                      <span id="passwordHelpInline" class="form-text">
+                                        박스 단위로 입력하세요. <br> 바코드를 스캔하는 만큼 수량이 증가합니다.
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                      <label for="inbound-price" class="form-label"><b>입고 가격</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                      <input type="number" name="inbound-price" id="inbound-price" class="form-control">
+                                    </div> 
+                                  </div>
+                                  <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-success">입고</button>
+                                  </div>
+                                  
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 재고 입고 현황 -->
+                    <div class="col-xl-5 col-md-12 mb-4">
+                      <div class="card shadow" style="height:100%">
+                        <div class="card-body">
+                          <h3><b>00월 입고 비율</b></h3>
+                          <canvas id="WarehousePie" width="100%"height="70px"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="card mb-4 shadow">
+                        <div class="card-header">
+                          <i class="fas fa-chart-bar me-1"></i>
+                                입고 History
+                        </div>
+                        <div class="card-body">
+                          <h3><b>과거 입고내역</b></h3>
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th>입고번호</th>
+                                <th>과일명</th>
+                                <th>바코드</th>
+                                <th>입고시각</th>
+                                <th>유통기한</th>
+                                <th>매입가</th>
+                                <th>입고량</th>
+                                <th>수정</th>
+                                <th>삭제</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>24050001</th>
+                                <th>중품 사과</th>
+                                <th>0000000000</th>
+                                <th>2024-05-08</th>
+                                <th>2024-06-30</th>
+                                <th>24,000</th>
+                                <th>300박스</th>
+                                <th><a href="warehousing/edit/1" class="btn btn-outline-primary ">Edit</a></th>
+                                <th><a href="" class="btn btn-outline-danger ">delete</a></th>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+{% endblock %}

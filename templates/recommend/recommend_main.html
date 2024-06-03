@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block main-content %}
+        <main>
+          <!--Dash Title-->
+          <div class="container-fluid">
+            <div class="px-3 py-4">
+                <p><a href="/recommend" style="text-decoration-line: none">Recommendation</a></p>
+                <h1 class="fw-bold">매입 추천 작물을 알려드립니다</h1>
+              <hr />
+            </div> 
+
+            <div class="p-5 pt-5 bg-light">
+                <div class="row">
+                  <div class="col-12 mb-4">
+                    <div class="card shadow" style="height: 100%;">
+                      <div class="card-body">
+                        <div class="container d-flex flex-column align-items-center py-5">
+                          <h1 class="mb-3 fw-bold">실시간 매입 추천 작물 확인하러 가기</h1>
+                          <div class="col-auto my-4">
+                            <a href="" class="btn btn-success col-auto py-3 px-5" style="font-size: 50px;">추천 받기</a>
+
+                          </div>
+                        </div>                        
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 mb-4">
+                    <div class="card shadow">
+                      <div class="card-header">
+                        <i class="fas fa-chart-area me-1"></i>
+                        과거 예측 결과
+                      </div>
+                      <div class="card-body">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>예측 요청일자</th>
+                              <th>추천 작물</th>
+                              <th>원산지</th>
+                              <th>추천 입고 창고</th>
+                              <th>추천 매입가격</th>
+                              <th>예측 최대 판매가격</th>
+                              <th>자세히 보기</th>
+                              <th>기록 삭제</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>2024-05-29</td>
+                              <td>중품 사과</td>
+                              <td>충주</td>
+                              <td>대전창고</td>
+                              <td>20000원</td>
+                              <td>32000원</td>
+                              <th><a href="/recommend/detail/1" class="btn btn-outline-primary">Detail</a></th>
+                              <td><a href="" class="btn btn-outline-danger">Delete</a></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+        </main>
+{% endblock %}
