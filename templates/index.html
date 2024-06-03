@@ -28,21 +28,21 @@
       <!--소매 가격 변동 그래프-->
       <div class="col-xl-6 col-sm-12">
         <div class="card mb-4 shadow" style="height: 95%">
-          <div class="card-header">
+            <div class="card-header">
             <i class="fas fa-chart-area me-1"></i>
             과일 소매 시세
-          </div>
-          <div class="card-body p-4" style="height: 100%">
+            </div>
+            <div class="card-body p-4" style="height: 100%">
             <!--이용자가 설정할 수 있게 만들기-->
-            <h5 class="fw-bold mb-3">사과 소매 시세</h5>
-            <canvas
-              id="myAreaChart"
-              width="757"
-              height="300"
-              class="chartjs-render-monitor"
-              style="display: block; width: 757px; height: 300px"
-            ></canvas>
-          </div>
+                <h5 class="fw-bold mb-3">사과 소매 시세</h5>
+                <canvas
+                    id="myAreaChart"
+                    width="757"
+                    height="300"
+                    class="chartjs-render-monitor"
+                    style="display: block; width: 757px; height: 300px"
+                ></canvas>
+            </div>
         </div>
       </div>
       <div class="row"></div>
@@ -186,8 +186,8 @@
 
 <!-- 차트 Script -->
 {% block chart-script %} {% load static %}
-<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
 <script src="{% static 'js/demo/chart-bar-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
 <script
   src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
   crossorigin="anonymous"
