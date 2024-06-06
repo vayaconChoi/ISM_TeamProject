@@ -21,7 +21,7 @@
           </div>
           <div class="card-body p-4">
             <!--네이버 지도-->
-            <div id="map" style="width: 100%; height: 100%"></div>
+            <div id="map" style="width: 100%; height: 400px"></div>
           </div>
         </div>
       </div>
@@ -42,50 +42,27 @@
       <div class="row"></div>
       <!--실시간 경매 정보-->
       <div class="col-xl-6 col-sm-12">
-        <div class="card mb-4 shadow">
+        <div class="card mb-4 shadow" style="height: 95%">
           <div class="card-header">
             <i class="fas fa-chart-bar me-1"></i>
             경매 현황
           </div>
-          <div class="card-body" style="height: 400px">
-            <h5 class="fw-bold">00도매시장 경매 결과</h5>
-            <table class="table fs-6">
-              <thead>
-                <tr>
-                  <th>경매일자</th>
-                  <th>품목명</th>
-                  <th>품종명</th>
-                  <th>경락단가</th>
-                  <th>거래량</th>
-                  <th>규격</th>
-                  <th>산지</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>24/05/07</th>
-                  <th>사과</th>
-                  <th>부사</th>
-                  <th>2000원</th>
-                  <th>30</th>
-                  <th>2Kg (박스)</th>
-                  <th>청송</th>
-                </tr>
-              </tbody>
-            </table>
+          <div class="card-body" style="height: 100%">
+            <h5 class="fw-bold">서울가락시장 금일 경매 결과</h5>
+            {% include 'component/auction_price_table.html' with auction_data=auction_data %}
           </div>
         </div>
       </div>
       <!--창고 재고 정보-->
       <div class="col-xl-6 col-sm-12">
-        <div class="card mb-4 shadow">
+        <div class="card mb-4 shadow" style="height: 95%">
           <div class="card-header">
             <i class="fas fa-chart-bar me-1"></i>
             창고 별 재고현황
           </div>
-          <div class="card-body" style="height: 400px">
+          <div class="card-body" style="height: 100%">
             <!-- 재고 총합 테이블 상속 -->
-            {% include 'component/inventory_total_table.html' %}
+            {% include 'component/inventory_total_table.html'  %}
           </div>
         </div>
       </div>
@@ -96,7 +73,7 @@
             <i class="fas fa-table me-1"></i>
             과거 수요 예측 기록
           </div>
-          <div class="card-body" style="height: 400px">
+          <div class="card-body" style="height: 100%">
             <h5 class="fw-bold">과거 수요 예측 프로그램 실행 결과</h5>
             <table id="datatablesSimple">
               <thead>
@@ -115,6 +92,137 @@
                   <td>배</td>
                   <td>200</td>
                   <td>사과</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
+                  <td>300</td>
+                  <td>
+                    <button class="btn btn-primary m-1">Detail</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2023/12/03</td>
+                  <td>귤</td>
+                  <td>200</td>
+                  <td>배</td>
                   <td>300</td>
                   <td>
                     <button class="btn btn-primary m-1">Detail</button>

@@ -12,8 +12,8 @@ def data_for_graph():
     ten_day_ago = ten_day_ago.strftime('%Y-%m-%d')
 
     # API KEY 불러오기
-    load_dotenv()
     key = os.getenv('KAMIS_KEY')
+    print(key)
     id = "4465"
     product = {
         "사과상품":['400', '411',"04"],
