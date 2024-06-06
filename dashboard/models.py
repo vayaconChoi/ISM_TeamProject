@@ -9,7 +9,7 @@ class User(models.Model):
 class Inventory(models.Model):
     inventory_id = models.BigAutoField(primary_key=True)
     inventory_quantity = models.IntegerField(default=0)
-    warehouse_id = models.ForeignKey("Warehouse",on_delete=models.CASCADE)
+    warehouse_id = models.ForeignKey("Warehouse", on_delete=models.CASCADE)
     fruit_id = models.ForeignKey("Fruit", on_delete=models.CASCADE)
 
 class Fruit(models.Model):
@@ -49,6 +49,6 @@ class Origin(models.Model):
     origin_id = models.BigAutoField(primary_key=True)
     origin_location = models.CharField(max_length =200)
     origin_address = models.CharField(max_length = 200)
-    origin_longitude = models.CharField(default = 0)
-    origin_latitude = models.CharField(default = 0)
+    origin_longitude = models.CharField(max_length = 100, default = 0)
+    origin_latitude = models.CharField(max_length = 100, default = 0)
 
