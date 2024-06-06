@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dashboard.apps.DashboardConfig",
     "users.apps.UsersConfig",
 ]
 
@@ -126,3 +127,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 LOGIN_REDIRECT_URL = '/'
+AUTH_USER_MODEL = 'users.UserDB'

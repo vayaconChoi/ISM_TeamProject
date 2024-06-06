@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import UserDB
 
-# Register your models here.
+# UserDB 연동
+admin.site.register(UserDB)

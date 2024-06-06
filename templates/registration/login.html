@@ -12,10 +12,8 @@
                 </div>
                 <div class="card-body">
                   <form method="post" action="{% url 'users:login' %}">
-                    {% csrf_token %} 
-                      <div>
-                      {% include 'registration/login_errors.html' %}
-                      </div>
+                    {% csrf_token %}
+                    <div>{% include 'registration/login_errors.html' %}</div>
                     <div class="form-floating mb-3">
                       <input
                         class="form-control"
@@ -47,7 +45,7 @@
                 </div>
                 <div class="card-footer text-center py-3">
                   <div class="small">
-                    <a href="register.html">Need an account? Sign up!</a>
+                    <a href="/users/signup">아직 계정이 없으신가요? 회원가입하기.</a>
                   </div>
                 </div>
               </div>
