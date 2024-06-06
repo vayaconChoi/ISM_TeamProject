@@ -2,8 +2,6 @@ import requests
 import os
 from datetime import datetime
 
-from re import sub
-
 
 from dotenv import load_dotenv
 from pathlib import Path

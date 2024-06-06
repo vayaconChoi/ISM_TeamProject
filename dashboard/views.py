@@ -5,7 +5,6 @@ from django.template import loader
 
 from .api import kamis, gonggong
 
-
 def index(request):
     # 메인 페이지
     print('접속 중....')
@@ -38,6 +37,8 @@ def inventory_details(request):
 
 
 def product_setting(request):
+
+
     return render(request, 'product/product_setting.html')
 
 
