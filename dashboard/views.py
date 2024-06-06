@@ -1,8 +1,24 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+from django.template import loader
 
+
+from .api import kamis
 
 def index(request):
-    return render(request, 'index.html')
+    # 메인 페이지
+    print('접속 중....')
+    # 데이터 가져오기...
+    retail_price = kamis.data_for_graph()
+    print("소매 데이터 가져오기 성공")
+    print(retail_price)
+
+    temp = loader.get_template('index.html')
+    context = {
+        "retail_price": retail_price[1],
+        "retail_date": retail_price[0]
+    }
+    return HttpResponse(temp.render(context, request))
 
 
 def inventory(request):

@@ -22,21 +22,21 @@
           <div class="card-body p-4">
             <!--네이버 지도-->
             <div id="map" style="width: 100%; height: 100%"></div>
-
           </div>
         </div>
       </div>
       <!--소매 가격 변동 그래프-->
       <div class="col-xl-6 col-sm-12">
         <div class="card mb-4 shadow" style="height: 95%">
-            <div class="card-header">
+          <div class="card-header">
             <i class="fas fa-chart-area me-1"></i>
             과일 소매 시세
-            </div>
-            <div class="card-body p-4" style="height: 100%">
-                <!--이용자가 설정할 수 있게 만들기-->
-                {% include 'component/retail_price.html' %}
-            </div>
+          </div>
+          <div class="card-body p-4" style="height: 100%">
+            <!--이용자가 설정할 수 있게 만들기-->
+            <!-- include with 소매 데이터 parameter -->
+            {% include 'component/retail_price.html' with retail_price=retail_price retail_date=retail_date %}
+          </div>
         </div>
       </div>
       <div class="row"></div>
@@ -86,7 +86,7 @@
           <div class="card-body" style="height: 400px">
             <!-- 재고 총합 테이블 상속 -->
             {% include 'component/inventory_total_table.html' %}
-            </div>
+          </div>
         </div>
       </div>
       <!--예측 History-->
@@ -176,7 +176,6 @@
 </script>
 
 {% endblock %}
-
 
 <!-- 차트 Script -->
 {% block chart-script %} {% load static %}
