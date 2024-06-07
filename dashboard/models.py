@@ -1,9 +1,6 @@
-
 from django.db import models
 from django.utils import timezone
-
-class User(models.Model):
-    user_id = models.BigAutoField(primary_key =True)
+from users import models as user_models
 
 
 class Inventory(models.Model):
@@ -23,26 +20,27 @@ class Warehouse(models.Model):
     warehouse_longitude = models.CharField(max_length= 100)
     warehouse_latitude = models.CharField(max_length=100)
     warehouse_address = models.CharField(max_length = 200)
-    user_id = models.ForeignKey("User",on_delete=models.CASCADE)
+    # user_id는 users앱의 userDB 모델로 부터 받기
+    user_id = models.ForeignKey(user_models.UserDB,on_delete=models.CASCADE)
 
 class Barcode(models.Model):
     barcode_id = models.BigAutoField(primary_key=True)
-    origin_id = models.ForeignKey("Origin",on_delete=models.CASCADE)
-    fruit_id = models.ForeignKey("Fruit",on_delete=models.CASCADE)
+    origin_id = models.ForeignKey("Origin", on_delete=models.CASCADE)
+    fruit_id = models.ForeignKey("Fruit", on_delete=models.CASCADE)
 
-class Inbound(models.Model):
-    inbound_id = models.BigAutoField(primary_key=True)
-    inbound_time = models.DateTimeField(default = timezone.now)
-    inbound_quantity = models.IntegerField(default = 0)
+class Warehousing(models.Model):
+    warehousing_id = models.BigAutoField(primary_key=True)
+    warehousing_time = models.DateTimeField(default = timezone.now)
+    warehousing_quantity = models.IntegerField(default = 0)
     release_until = models.DateTimeField(default = timezone.now)
-    inbound_price = models.IntegerField(default =0)
+    warehousing_price = models.IntegerField(default =0)
     barcode_id = models.ForeignKey("Barcode",on_delete = models.CASCADE)
 
-class Release(models.Model):
-    release_id = models.BigAutoField(primary_key = True)
-    release_time = models.DateTimeField(default = timezone.now)
-    release_quantity = models.IntegerField(default = 0)
-    release_price = models.IntegerField(default=0)
+class Shipping(models.Model):
+    Shipping_id = models.BigAutoField(primary_key = True)
+    Shipping_time = models.DateTimeField(default = timezone.now)
+    Shipping_quantity = models.IntegerField(default = 0)
+    Shipping_price = models.IntegerField(default=0)
     barcode_id = models.ForeignKey("Barcode",on_delete=models.CASCADE)
 
 class Origin(models.Model):

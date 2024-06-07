@@ -1,0 +1,39 @@
+<table id="AuctionDataTable">
+  <thead>
+    <tr>
+      <th>경매 시각</th>
+      <th>품목</th>
+      <th>품종</th>
+      <th>가격</th>
+      <th>원산지</th>
+      <th>거래량</th>
+      <th>거래단위</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for f in auction_data %}
+    <tr>
+      <td>{{ f.sbidtime }}</td>
+      <td>{{ f.midName }}</td>
+      <td>{{ f.smallName }}</td>
+      <th>{{ f.cost }}</th>
+      <td>{{ f.sanName }}</td>
+      <td>{{ f.qty }}</td>
+      <td>{{ f.std }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script>
+  window.addEventListener("DOMContentLoaded", (event) => {
+    // Simple-DataTables
+    // https://github.com/fiduswriter/Simple-DataTables/wiki
+
+    const datatablesSimple = document.getElementById("AuctionDataTable");
+    if (datatablesSimple) {
+      new simpleDatatables.DataTable(datatablesSimple);
+    }
+  });
+</script>
