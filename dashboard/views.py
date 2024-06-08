@@ -1,6 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
+from .models import Warehouse, Inventory,Fruit,Shipping
+from datetime import datetime
+from users import models as user_models
+from collections import defaultdict
+import json
 
 
 from .api import kamis, gonggong
@@ -27,35 +32,84 @@ def index(request):
     }
     return HttpResponse(temp.render(context, request))
 
-
 def inventory(request):
-    return render(request, 'inventory/inventory_summary.html')
+    user_id = request.user.id
+    user_warehouses = Warehouse.objects.filter(user_id=user_id)
+    inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
+    aggregated_quantities = defaultdict(int)
 
+    for inventory in inventory_data:
+        aggregated_quantities[inventory.fruit_id] += inventory.inventory_quantity
+
+    fruit_names = {fruit.id: fruit.fruit_name for fruit in Fruit.objects.all()}
+    labels = [fruit_names[fruit_id] for fruit_id in aggregated_quantities.keys()]
+    quantities = [quantity for quantity in aggregated_quantities.values()]
+
+    # JSON 형식으로 변형... 이게 뭐노... 어렵다...
+    labels_json = json.dumps(labels, ensure_ascii=False)
+    quantities_json = json.dumps(quantities)
+
+    # 현재 월 가져오기
+    now = datetime.now()
+    current_month = now.month
+
+    context = {
+        'warehouses': user_warehouses,
+        'labels_json': labels_json,
+        'quantities_json': quantities_json,
+        'current_month': current_month,
+    }
+
+    return render(request, 'inventory/inventory_summary.html',context)
 
 def inventory_details(request):
     return render(request, 'inventory/inventory_item_detail.html')
-
 
 def product_setting(request):
 
 
     return render(request, 'product/product_setting.html')
 
-
 def product_edit(request):
     return render(request, "product/product_edit.html")
 
-
 def warehousing(request):
     return render(request, "warehousing/warehousing.html")
-
 
 def warehousing_edit(request):
     return render(request, "warehousing/warehousing_edit.html")
 
 
 def shipping(request):
-    return render(request, "shipping/shipping.html")
+    user_id = request.user.id
+    user_warehouses = Warehouse.objects.filter(user_id=user_id)
+    inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
+    aggregated_quantities = defaultdict(int)
+
+    for inventory in inventory_data:
+        aggregated_quantities[inventory.fruit_id] += inventory.inventory_quantity
+
+    fruit_names = {fruit.id: fruit.fruit_name for fruit in Fruit.objects.all()}
+    labels = [fruit_names[fruit_id] for fruit_id in aggregated_quantities.keys()]
+    quantities = [quantity for quantity in aggregated_quantities.values()]
+
+    # JSON 형식으로 변형... 이게 뭐노... 어렵다...
+    labels_json = json.dumps(labels, ensure_ascii=False)
+    quantities_json = json.dumps(quantities)
+
+    # 현재 월 가져오기
+    now = datetime.now()
+    current_month = now.month
+
+    context = {
+        'warehouses': user_warehouses,
+        'labels_json': labels_json,
+        'quantities_json': quantities_json,
+        'current_month': current_month,
+    }
+
+    return render(request, 'shipping/shipping.html', context)
+
 
 
 def shipping_edit(request):

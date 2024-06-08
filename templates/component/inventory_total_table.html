@@ -10,20 +10,22 @@
                     <th>상세보기</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <th>00창고</th>
-                    <th>사과</th>
-                    <th>2024-05-10</th>
-                    <th>2024-08-30</th>
-                    <th>100</th>
-                    <th>
-                      <a
-                        class="btn btn-primary m-1"
-                        href="inventory/1"
-                        >Detail</a
-                      >
-                    </th>
-                  </tr>
+                  <tbody>
+                    {% for warehouse in warehouses %}
+                      {% for inventory in warehouse.inventory_set.all %}
+                        {% for warehousing in inventory.fruit.warehousing_set.all %}
+                          <tr>
+                            <th>{{ warehouse.warehouse_name }}</th>
+                            <th>{{ inventory.fruit.fruit_name }}</th>
+                            <th>{{ warehousing.warehousing_time }}</th>
+                            <th>{{ warehousing.release_until }}</th>
+                            <th>{{ inventory.inventory_quantity }}</th>
+                            <th>
+{#                               <a class="btn btn-primary m-1" href="{% url 'inventory_item_detail' inventory.id %}">Detail</a>#}
+                            </th>
+                          </tr>
+                        {% endfor %}
+                      {% endfor %}
+                    {% endfor %}
                 </tbody>
               </table>

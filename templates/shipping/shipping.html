@@ -20,6 +20,7 @@
                             <h3><b>상품 출고하기</b></h3>
                                 <!--if 조회된 상품이 없음-->
                                 <form method="post" class="my-3">
+                                    {% csrf_token %}
                                   <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
                                       <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
@@ -41,10 +42,11 @@
                                     <button class="btn btn-outline-primary">상품 수정</button>
                                   </div>
                                 </div>
-                                <select class="form-select mb-2" name="" id="selectFruit">
-                                  <option selected>출고 창고를 선택하세요</option>
-                                  <option value="yongin-ref">용인 냉장창고</option>
-                                  <option value="seoul-fro">서울 냉동창고</option>
+                                <select class="form-select mb-2" name="warehouse" id="selectWarehouse">
+                                    <option selected>출고 창고를 선택하세요</option>
+                                    {% for warehouse in warehouses %}
+                                    <option value="{{ warehouse.id }}">{{ warehouse.warehouse_name }}</option>
+                                    {% endfor %}
                                 </select>
                                 <form method="post" class="py-1">
                                   <div class="row g-3 align-items-center mb-3">
@@ -88,8 +90,9 @@
                     <div class="col-xl-5 col-md-12 mb-4">
                       <div class="card shadow" style="height:100%">
                         <div class="card-body">
-                          <h3><b>00월 출고 비율</b></h3>
-                          <canvas id="WarehousePie" width="100%"height="70px"></canvas>
+                          <h3><b>{{ current_month}}월 출고 비율</b></h3>
+                            {{ chart_html|safe }}
+                          <canvas id="WarehousePie" width="100%" height="70px"></canvas>
                         </div>
                       </div>
                     </div>
@@ -132,11 +135,36 @@
                     </div>
                 </div>
             </div>
-
         </main>
 {% endblock %}
             
 <!-- chart script -->
 {% block chart-script %}{% load static %}
-<script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>
+{#<script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>#}
+        <script>
+        // Python-generated data
+        var xValues = {{ labels_json|safe }};
+        var yValues = {{ quantities_json|safe }};
+        var barColors = ["red", "yellow", "blue", "green", "orange"];
+        var text = "{{ warehouse.warehouse_name }} 상품현황";
+
+        // Pie Chart
+        var ctx = document.getElementById("WarehousePie").getContext('2d');
+        var warePieChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    data: yValues,
+                    backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: text,
+                }
+            }
+        });
+    </script>
 {% endblock %}

@@ -18,6 +18,8 @@
                         <div class="card-body">
                           <h3><b>창고 추가</b></h3>
                           <form method="post" class="py-1">
+                              {% csrf_token %}
+                              {{ form }}
                             <h5><b>주소</b></h5>
                             <!--주소 입력 받는건 https://developers.kakao.com/docs/latest/ko/local/dev-guide-->
                             <div class="row g-3 align-items-center mb-3">
