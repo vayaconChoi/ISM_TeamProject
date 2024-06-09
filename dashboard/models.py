@@ -36,9 +36,11 @@ class Warehousing(models.Model):
     release_until = models.DateTimeField(default = timezone.now)
     warehousing_price = models.IntegerField(default =0)
     barcode = models.ForeignKey(Barcode,on_delete = models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, on_delete = models.CASCADE)
 
 class Shipping(models.Model):
     Shipping_time = models.DateTimeField(default = timezone.now)
     Shipping_quantity = models.IntegerField(default = 0)
     Shipping_price = models.IntegerField(default=0)
     barcode = models.ForeignKey(Barcode,on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)

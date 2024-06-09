@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.template import loader
-from .models import Warehouse, Inventory,Fruit,Shipping
+from .models import Warehouse,Inventory,Fruit,Shipping
+from .forms import WarehouseForm
 from datetime import datetime
 from users import models as user_models
 from collections import defaultdict
@@ -117,7 +118,26 @@ def shipping_edit(request):
 
 
 def warehouse(request):
-    return render(request, "warehouse/warehouse.html")
+    if request.method == 'POST':
+        form = WarehouseForm(request.POST)
+        if form.is_valid():
+            warehouse_name = form.cleaned_data['warehouse_name']
+            address = form.cleaned_data['address']
+            warehouse_latitude = form.cleaned_data['warehouse_latitude']
+            warehouse_longitude = form.cleaned_data['warehouse_longitude']
+
+            # Save the data to the database
+            Warehouse.objects.create(
+                warehouse_name=warehouse_name,
+                warehouse_longitude=warehouse_longitude,
+                warehouse_latitude=warehouse_latitude,
+                warehouse_address=address,
+                user=request.user
+            )
+            return redirect('warehouse')  # Redirect to a success page
+    else:
+        form = WarehouseForm()
+    return render(request, "warehouse/warehouse.html", {'form': form})
 
 
 def warehouse_detail(request):
