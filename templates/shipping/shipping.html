@@ -4,7 +4,7 @@
           <!--Dash Title-->
           <div class="container-fluid">
             <div class="px-3 py-4">
-                <p><a href="/inventory" style="text-decoration-line: none">Inventory</a> / <a href="#" style="text-decoration-line: none">Warehousing</a></p>
+                <p><a href="/inventory" style="text-decoration-line: none">Inventory</a> / <a href="#" style="text-decoration-line: none">Shipping</a></p>
                 <h1 class="fw-bold">Shipping Product (상품 출고)</h1>
               <hr />
               <p>바코드를 스캔하거나 직접 입력하여 입고를 관리하세요.</p>
@@ -111,23 +111,25 @@
                                 <th>과일명</th>
                                 <th>바코드</th>
                                 <th>출고시각</th>
-                                <th>매입가</th>
+                                <th>출고가</th>
                                 <th>출고량</th>
                                 <th>수정</th>
                                 <th>삭제</th>
                               </tr>
                             </thead>
                             <tbody>
+                            {% for shipping in shippings %}
                               <tr>
-                                <th>24050001</th>
-                                <th>중품 사과</th>
-                                <th>0000000000</th>
-                                <th>2024-05-08</th>
-                                <th>24,000</th>
-                                <th>300박스</th>
+                                <th>{{ shipping.id }}</th>
+                                <th>{{ shipping.barcode.fruit.fruit_name }}</th>
+                                <th>{{ shipping.barcode_id }}</th>
+                                <th>{{ shipping.Shipping_time|date:"Y-m-d" }}</th>
+                                <th>{{ shipping.Shipping_price }}</th>
+                                <th>{{ shipping.shipping_quantity }}박스</th>
                                 <th><a href="/shipping/edit/1" class="btn btn-outline-primary ">Edit</a></th>
                                 <th><a href="" class="btn btn-outline-danger ">delete</a></th>
                               </tr>
+                            {% endfor %}
                             </tbody>
                           </table>
                         </div>
@@ -146,7 +148,7 @@
         var xValues = {{ labels_json|safe }};
         var yValues = {{ quantities_json|safe }};
         var barColors = ["red", "yellow", "blue", "green", "orange"];
-        var text = "{{ warehouse.warehouse_name }} 상품현황";
+        var text = {{ warehouse.warehouse_name }} "상품현황";
 
         // Pie Chart
         var ctx = document.getElementById("WarehousePie").getContext('2d');

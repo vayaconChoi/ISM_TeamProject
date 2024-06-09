@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
-from .models import Warehouse, Inventory,Fruit,Shipping
+from .models import Warehouse, Inventory,Fruit,Shipping,Barcode
 from datetime import datetime
 from users import models as user_models
 from collections import defaultdict
 import json
-
+from django.utils.dateparse import parse_datetime
 
 from .api import kamis, gonggong
 
@@ -34,6 +34,7 @@ def index(request):
 
 def inventory(request):
     user_id = request.user.id
+    warehouses = Warehouse.objects.filter(user_id=user_id).select_related()
     user_warehouses = Warehouse.objects.filter(user_id=user_id)
     inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
     aggregated_quantities = defaultdict(int)
@@ -54,7 +55,8 @@ def inventory(request):
     current_month = now.month
 
     context = {
-        'warehouses': user_warehouses,
+        'warehouses' : warehouses,
+        'user_warehouses': user_warehouses,
         'labels_json': labels_json,
         'quantities_json': quantities_json,
         'current_month': current_month,
@@ -62,8 +64,10 @@ def inventory(request):
 
     return render(request, 'inventory/inventory_summary.html',context)
 
-def inventory_details(request):
-    return render(request, 'inventory/inventory_item_detail.html')
+def inventory_details(request,inventory_id):
+    # user_id = request.user.id
+    inventory = Inventory.objects.get(id=inventory_id)
+    return render(request, 'inventory/inventory_item_detail.html',inventory)
 
 def product_setting(request):
 
@@ -85,7 +89,8 @@ def shipping(request):
     user_warehouses = Warehouse.objects.filter(user_id=user_id)
     inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
     aggregated_quantities = defaultdict(int)
-
+    shippings = Shipping.objects.filter(warehouse__in=user_warehouses).select_related('barcode__fruit')
+    # barcode_id = Shipping.objects.filter()
     for inventory in inventory_data:
         aggregated_quantities[inventory.fruit_id] += inventory.inventory_quantity
 
@@ -106,6 +111,7 @@ def shipping(request):
         'labels_json': labels_json,
         'quantities_json': quantities_json,
         'current_month': current_month,
+        'shippings': shippings,
     }
 
     return render(request, 'shipping/shipping.html', context)
