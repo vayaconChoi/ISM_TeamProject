@@ -1,5 +1,5 @@
-              <h5 class="fw-bold">판매자 재고 현황</h5>
-              <table class="table">
+<h5 class="fw-bold">판매자 재고 현황</h5>
+<table class="table">
                 <thead>
                   <tr>
                     <th>창고명</th>
@@ -11,21 +11,23 @@
                   </tr>
                 </thead>
                   <tbody>
-                    {% for warehouse in warehouses %}
-                      {% for inventory in warehouse.inventory_set.all %}
-                        {% for warehousing in inventory.fruit.warehousing_set.all %}
-                          <tr>
-                            <th>{{ warehouse.warehouse_name }}</th>
-                            <th>{{ inventory.fruit.fruit_name }}</th>
-                            <th>{{ warehousing.warehousing_time }}</th>
-                            <th>{{ warehousing.release_until }}</th>
-                            <th>{{ inventory.inventory_quantity }}</th>
-                            <th>
-{#                               <a class="btn btn-primary m-1" href="{% url 'inventory_item_detail' inventory.id %}">Detail</a>#}
-                            </th>
-                          </tr>
-                        {% endfor %}
-                      {% endfor %}
-                    {% endfor %}
-                </tbody>
+    {% for warehouse in warehouses %}
+      {% for inventory in warehouse.inventory_set.all %}
+        {% for warehousing in inventory.fruit.barcode_set.all %}
+          {% for wh in warehousing.warehousing_set.all %}
+            <tr>
+              <td>{{ warehouse.warehouse_name }}</td>
+              <td>{{ inventory.fruit.fruit_name }}</td>
+              <td>{{ wh.warehousing_time|date:"Y-m-d H:i" }}</td>
+              <td>{{ wh.release_until|date:"Y-m-d H:i" }}</td>
+              <td>{{ inventory.inventory_quantity }}</td>
+              <td>
+                <a class="btn btn-primary m-1" href="{% url 'inventory_item_detail' inventory.id %}">상세 보기</a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      {% endfor %}
+    {% endfor %}
+  </tbody>
               </table>
