@@ -41,11 +41,15 @@
                                     <button class="btn btn-outline-primary">상품 수정</button>
                                   </div>
                                 </div>
-                                <select class="form-select mb-2" name="" id="selectFruit">
-                                  <option selected>입고 창고를 선택하세요</option>
-                                  <option value="yongin-ref">용인 냉장창고</option>
-                                  <option value="seoul-fro">서울 냉동창고</option>
-                                </select>
+                                <div class="col-auto">
+                                    <label for="warehouse_name" class="form-label"><b>창고 이름</b></label>
+                                </div>
+                                <select name="{{ form.warehouse.name }}" id="{{ form.warehouse.id_for_label }}">
+                                <option selected>입고 창고를 선택하세요</option>
+                                            {% for warehouse in form.warehouse.field.queryset %}
+                                                <option value="{{ warehouse.pk }}">{{ warehouse.warehouse_name }}</option>
+                                            {% endfor %}
+                                        </select>
                                 <form method="post" class="py-1">
                                   <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
@@ -88,8 +92,8 @@
                     <div class="col-xl-5 col-md-12 mb-4">
                       <div class="card shadow" style="height:100%">
                         <div class="card-body">
-                          <h3><b>00월 입고 비율</b></h3>
-                          <canvas id="WarehousePie" width="100%"height="70px"></canvas>
+                            <h3><b>{{ current_month}}월 출고 비율</b></h3>
+                            <canvas id="WarehousePie" width="100%" height="70px"></canvas>
                         </div>
                       </div>
                     </div>
@@ -116,9 +120,10 @@
                               </tr>
                             </thead>
                             <tbody>
+                            {% for warehousing in warehousings %}
                               <tr>
-                                <th>24050001</th>
-                                <th>중품 사과</th>
+                                <th>{warehousing.warehousing_id}</th>
+                                <th>{}</th>
                                 <th>0000000000</th>
                                 <th>2024-05-08</th>
                                 <th>2024-06-30</th>
@@ -127,6 +132,7 @@
                                 <th><a href="warehousing/edit/1" class="btn btn-outline-primary ">Edit</a></th>
                                 <th><a href="" class="btn btn-outline-danger ">delete</a></th>
                               </tr>
+                            {% endfor %}
                             </tbody>
                           </table>
                         </div>
@@ -140,5 +146,31 @@
 
 <!-- chart script -->
 {% block chart-script %}{% load static %}
-<script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>
+{#<script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>#}
+    <script>
+        // Python-generated data
+        var xValues = {{ labels_json|safe }};
+        var yValues = {{ quantities_json|safe }};
+        var barColors = ["red", "yellow", "blue", "green"];
+        var text = "{{ user_warehouses.warehouse_name }} 상품현황";
+
+        // Pie Chart
+        var ctx = document.getElementById("WarehousePie").getContext('2d');
+        var warePieChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    data: yValues,
+                    backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: text,
+                }
+            }
+        });
+    </script>
 {% endblock %}

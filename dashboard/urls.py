@@ -13,7 +13,8 @@ urlpatterns = [
     path("warehousing/edit/1", views.warehousing_edit, name="warehousing_edit"),
 
     path("shipping", views.shipping, name="shipping"),
-    path("shipping/edit/1", views.shipping_edit, name="shipping_edit"),
+    path("shipping/edit/<int:shipping_id>", views.shipping_edit, name="shipping_edit"),
+    path("shipping/delete/<int:shipping_id>",views.shipping_delete,name="delete_shipping"),
     
     path("warehouse", views.warehouse, name="warehouse"),
     path("warehouse/1", views.warehouse_detail, name="warehouse_detail"),

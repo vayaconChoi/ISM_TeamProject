@@ -42,40 +42,50 @@
                         </div>
                       </div>
                       <!-- 변경 내용 Form (내용은 미리 입력 되어있음) -->
-                      <form method="post" class="py-1">
-                        <select class="form-select mb-3" name="" id="selectFruit">
+                      <form method="POST"  class="py-1">
+                          {% csrf_token %}
+                           <div class="row g-3 align-items-center mb-3">
+                                <div class="col-auto">
+                                    <label for="barcode_name" class="form-label"><b>바코드 입력</b></label>
+                                </div>
+                                <div class="col-auto">
+                                {{ form.barcode }}
+                                </div>
+                           </div>
+                            <select class="form-select mb-3" name="" id="selectFruit">
                           <option selected>출고 창고를 선택하세요</option>
-                          <option value="yongin-ref">용인 냉장창고</option>
-                          <option value="seoul-fro">서울 냉동창고</option>
+                             {% for warehouse in form.warehouse.field.queryset %}
+                            <option value="{{ warehouse.id }}">{{ warehouse.warehouse_name }}</option>
+                             {% endfor %}
                         </select>
                         <div class="row g-3 align-items-center mb-3">
-                          <div class="col-auto">
-                            <label for="release-time" class="form-label"><b>출고 시각</b></label>
-                          </div>
-                          <div class="col-auto">
-                            <input type="datetime-local" name="release-time" id="release-time" class="form-control" />
-                          </div>
+                            <div class="col-auto">
+                                <label class="form-label"><b>출고 시각</b></label>
+                            </div>
+                            <div class="col-auto">
+                            {{ form.shipping_time }}
+                            </div>
                         </div>
                         <div class="row g-3 align-items-center mb-3">
                           <div class="col-auto">
-                            <label for="release-quantity" class="form-label"><b>출고 수량</b></label>
+                            <label class="form-label"><b>출고 수량</b></label>
                           </div>
                           <div class="col-auto">
-                            <input type="number" name="release-quantity" id="release-quantity" class="form-control" />
+                            {{ form.shipping_quantity }}
                           </div>
                           <div class="col-auto">
                             <span id="passwordHelpInline" class="form-text">
                               박스 단위로 입력하세요. <br />
-                              바코드를 스캔하는 만큼 수량이 증가합니다.
+                              바코드를 스캔하는만큼 수량이 증가합니다.
                             </span>
                           </div>
                         </div>
                         <div class="row g-3 align-items-center mb-3">
                           <div class="col-auto">
-                            <label for="release-price" class="form-label"><b>출고 가격</b></label>
+                            <label class="form-label"><b>출고 가격</b></label>
                           </div>
                           <div class="col-auto">
-                            <input type="number" name="release-price" id="release-price" class="form-control" />
+                             {{ form.shipping_price }}
                           </div>
                         </div>
                         <div class="d-flex flex-row-reverse">
