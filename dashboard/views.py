@@ -24,11 +24,15 @@ def index(request):
     print("경매 데이터 가져오기 성공")
     # print(auction_data) # 다량이라 평시 주석처리
 
+    user_id = request.user.id
+    user_warehouses = Warehouse.objects.filter(user_id=user_id)
+
     temp = loader.get_template('index.html')
     context = {
         "retail_price": retail_price[1],
         "retail_date": retail_price[0],
-        "auction_data": auction_data
+        "auction_data": auction_data,
+        "warehouses" : user_warehouses
     }
     return HttpResponse(temp.render(context, request))
 
@@ -64,10 +68,13 @@ def inventory(request):
 
     return render(request, 'inventory/inventory_summary.html',context)
 
-def inventory_details(request,inventory_id):
-    # user_id = request.user.id
-    inventory = Inventory.objects.get(id=inventory_id)
-    return render(request, 'inventory/inventory_item_detail.html',inventory)
+def inventory_details(request):
+    user_id = request.user.id
+    inventory = Inventory.objects.get(id=user_id).id
+    context = {
+        "inventory":inventory,
+    }
+    return render(request, 'inventory/inventory_item_detail.html')
 
 def product_setting(request):
 
@@ -123,7 +130,9 @@ def shipping_edit(request):
 
 
 def warehouse(request):
-    return render(request, "warehouse/warehouse.html")
+    user_id = request.user.id
+    user_warehouses = Warehouse.objects.filter(user_id=user_id)
+    return render(request, "warehouse/warehouse.html", {'warehouses': user_warehouses})
 
 
 def warehouse_detail(request):

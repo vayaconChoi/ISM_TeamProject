@@ -22,7 +22,7 @@
               <td>{{ wh.release_until|date:"Y-m-d H:i" }}</td>
               <td>{{ inventory.inventory_quantity }}</td>
               <td>
-                <a class="btn btn-primary m-1" href="{% url 'inventory_item_detail' inventory.id %}">상세 보기</a>
+                <a class="btn btn-primary m-1" href="{% url 'inventory_item_detail' %}">상세 보기</a>
               </td>
             </tr>
           {% endfor %}

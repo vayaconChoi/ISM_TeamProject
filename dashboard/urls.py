@@ -4,9 +4,11 @@ from dashboard import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("inventory", views.inventory, name="inventory"),
-    path("inventory/<int:inventory_id>", views.inventory_details, name='inventory_item_detail'),
+    path("inventory/1", views.inventory_details, name='inventory_item_detail'),
+
     path("product", views.product_setting, name='product-setting'),
     path("product/edit/1", views.product_edit, name='product-edit'),
+
     path("warehousing", views.warehousing, name='warehousing'),
     path("warehousing/edit/1", views.warehousing_edit, name="warehousing_edit"),
 
