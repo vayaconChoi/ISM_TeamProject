@@ -58,17 +58,11 @@
                                         <div class="col-auto">
                                             <label for="warehouse_name" class="form-label"><b>창고 이름</b></label>
                                         </div>
-                                        <select class="form-select mb-2 " name="warehouse" id="selectWarehouse">
-                                        <option selected>출고 창고를 선택하세요</option>
-                                        {% for warehouse in warehouses %}
-                                        <option value="{{ warehouse.id }}">{{ warehouse.warehouse_name }}</option>
-                                        {% endfor %}
+                                        <select class="form-select mb-2 "name="{{ form.warehouse.name }}" id="{{ form.warehouse.id_for_label }}">
+                                            {% for warehouse in form.warehouse.field.queryset %}
+                                                <option value="{{ warehouse.pk }}">{{ warehouse.warehouse_name }}</option>
+                                            {% endfor %}
                                         </select>
-{#                                        <select name="{{ form.warehouse.name }}" id="{{ form.warehouse.id_for_label }}">#}
-{#                                            {% for warehouse in form.warehouse.field.queryset %}#}
-{#                                                <option value="{{ warehouse.pk }}">{{ warehouse.warehouse_name }}</option>#}
-{#                                            {% endfor %}#}
-{#                                        </select>#}
                                     </div>
                                     <div class="row g-3 align-items-center mb-3">
                                         <div class="col-auto">
@@ -164,6 +158,7 @@
                     </div>
                 </div>
             </div>
+          </div>
         </main>
 {% endblock %}
             
@@ -174,7 +169,7 @@
         // Python-generated data
         var xValues = {{ labels_json|safe }};
         var yValues = {{ quantities_json|safe }};
-        var barColors = ["red", "yellow", "blue", "green", "orange"];
+        var barColors = ["red", "yellow", "blue", "green"];
         var text = {{ warehouse.warehouse_name }} "상품현황";
 
         // Pie Chart

@@ -1,257 +1,313 @@
 {% extends "base.html" %}
 {% block main-content %}
-
-        <main>
-          <!--Dash Title-->
-          <div class="container-fluid">
-            <div class="px-3 py-4">
-                <p><a href="/warehouse" style="text-decoration-line: none">Warehouse</a></p>
-                <h1 class="fw-bold">Warehouse Information(창고 정보)</h1>
-              <hr />
-            </div> 
-
-            <div class="p-5 pt-5 bg-light">
-                <div class="row">
-                    <!-- 창고 추가 화면 -->
-                    <div class="col-xl-7 col-md-12 mb-4">
-                      <div class="card shadow" style="height: 100%;">
+<main>
+    <!--Dash Title-->
+    <div class="container-fluid">
+        <div class="px-3 py-4">
+            <p><a href="/warehouse" style="text-decoration-line: none">Warehouse</a></p>
+            <h1 class="fw-bold">Warehouse Information(창고 정보)</h1>
+            <hr />
+        </div>
+        <div class="p-5 pt-5 bg-light">
+            <div class="row">
+                <!-- 창고 추가 화면 -->
+                <div class="col-xl-7 col-md-12 mb-4">
+                    <div class="card shadow" style="height: 100%;">
                         <div class="card-body">
-                          <h3><b>창고 추가</b></h3>
-                          <form method="post" class="py-1">
-                              {% csrf_token %}
-                              {{ form }}
-                            <h5><b>주소</b></h5>
-                            <!--주소 입력 받는건 https://developers.kakao.com/docs/latest/ko/local/dev-guide-->
-                            <div class="row g-3 align-items-center mb-3">
-                              <div class="col-8">
-                                  <input class="form-control" type="text" id="sample5_address" placeholder="주소">
-                              </div>
-                              <div class="col-auto">
-                                  <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색" class="btn btn-outline-primary"><br>
-                              </div>
-                            </div>
-                            <h5><b>창고 정보</b></h5>
-                            <div class="row g-3 align-items-center mb-3">
-                              <div class="col-auto">
-                                <label for="warehouse-name" class="form-label"><b>창고 이름</b></label>
-                              </div>
-                              <div class="col-auto">
-                                <input type="text" name="warehouse-name" id="warehouse-name" class="form-control">
-                              </div> 
-                            </div>
-                            <div class="row g-3 align-items-center mb-3">
-                              <div class="col-auto">
-                                <label for="warehouse-capa" class="form-label"><b>창고 용량</b></label>
-                              </div>
-                              <div class="col-auto ">
-                                <input type="number" step="0.01" name="warehouse-capa" id="warehouse-capa" class="form-control">
-                              </div> 
-                              <div class="col-auto">
-                                <span id="passwordHelpInline" class="form-text">
-                                  CBM (소수점 둘째자리)
-                                </span>
-                              </div>
-                            </div>
-                            <div class="d-flex flex-row-reverse">
-                              <button type="submit" class="btn btn-success">확인</button>
-                            </div>        
-                          </form>
+                            <h3><b>창고 추가</b></h3>
+                            <form method="post" class="py-1">
+                                {% csrf_token %}
+                                <h5><b>주소</b></h5>
+                                <!--주소 입력 받는건 https://developers.kakao.com/docs/latest/ko/local/dev-guide-->
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-8">
+                                        {{ form.warehouse_address }}
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색" class="btn btn-outline-primary"><br>
+                                    </div>
+                                </div>
+                                <h5><b>창고 정보</b></h5>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="warehouse-name" class="form-label"><b>창고 이름</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                        {{ form.warehouse_name }}
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="warehouse-capa" class="form-label"><b>창고 용량</b></label>
+                                    </div>
+                                    <div class="col-auto ">
+                                        {{ form.warehouse_capacity }}
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="passwordHelpInline" class="form-text">
+                                            CBM (소수점 둘째자리)
+                                        </span>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="warehouse_latitude" name="warehouse_latitude">
+                                <input type="hidden" id="warehouse_longitude" name="warehouse_longitude">
+                                <div class="row g-3 align-items-center mb-3" style="display:none">
+                                    <div class="col-auto">
+                                        <label for="warehousing_user" class="form-label"><b>사용자 id</b></label>
+                                    </div>
+                                    <input type="hidden" name="user" value="{{ request.user.id }}">
+                                </div>
+                                <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-success">확인</button>
+                                </div> 
+                            </form>
                         </div>
-                      </div>
                     </div>
-                    <!-- 창고 현황 지도 -->
-                    <div class="col-xl-5 col-md-12 mb-4">
-                      <div class="card shadow" style="height:100%">
+                </div>
+                <!-- 창고 현황 지도 -->
+                <div class="col-xl-5 col-md-12 mb-4">
+                    <div class="card shadow" style="height:100%">
                         <div class="card-body">
-                          <h3><b>창고 현황</b></h3>
-                          <!--까까오 지도-->
-                        <div id="map" style="width:100%;height:300px;"></div>
+                            <h3><b>창고 현황</b></h3>
+                            <!--까까오 지도-->
+                            <div id="map" style="width:100%;height:300px;"></div>
 
                         </div>
-                      </div>
                     </div>
-                    <!-- 창고 List -->
-                    <div class="col-12">
-                      <div class="card mb-4 shadow">
+                </div>
+                <!-- 창고 List -->
+                <div class="col-12">
+                    <div class="card mb-4 shadow">
                         <div class="card-header">
-                          <i class="fas fa-chart-bar me-1"></i>
-                                창고 리스트
+                            <i class="fas fa-chart-bar me-1"></i>
+                            창고 리스트
                         </div>
                         <div class="card-body">
-                          <h3><b>창고 리스트</b></h3>
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th>창고번호</th>
-                                <th>창고이름</th>
-                                <th>창고주소</th>
-                                <th>창고용량</th>
-                                <th>상세정보</th>
-                                <th>수정</th>
-                                <th>삭제</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <th>24050001</th>
-                                <th>00창고</th>
-                                <th>경기도 용인시 처인구 모현읍 00로 00</th>
-                                <th>30CBM</th>
-                                <th><a href="warehouse/1" class="btn btn-outline-success">Detail</a></th>
-                                <th><a href="warehouse/1/edit" class="btn btn-outline-primary ">Edit</a></th>
-                                <th><a href="" class="btn btn-outline-danger ">delete</a></th>
-                              </tr>
-                            </tbody>
-                          </table>
+                            <h3><b>창고 리스트</b></h3>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>창고번호</th>
+                                        <th>창고이름</th>
+                                        <th>창고주소</th>
+                                        <th>창고용량</th>
+                                        <th>상세정보</th>
+                                        <th>수정</th>
+                                        <th>삭제</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for warehouse in warehouses %}
+                                    <tr>
+                                        <td>{{ warehouse.warehouse_id }}</td>
+                                        <td>{{ warehouse.warehouse_name }}</td>
+                                        <td>{{ warehouse.warehouse_address }}</td>
+                                        <td>{{ warehouse.warehouse_capacity }}</td>
+                                        <td><a href="{% url 'warehouse_detail' warehouse.warehouse_id %}" class="btn btn-outline-success">Detail</a></td>
+                                        <td><a href="{% url 'warehouse_edit' warehouse.warehouse_id %}" class="btn btn-outline-primary ">Edit</a></td>
+                                        <td><a href="{% url 'delete_warehouse' warehouse.warehouse_id %}" class="btn btn-outline-danger ">delete</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                      </div>
                     </div>
                 </div>
             </div>
-          </div>
-        </main>
+        </div>
+    </div>
+</main>
 {% endblock %}
 
 <!-- 지도 script 오는 곳 -->
 {% block map-script %}
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bdc6ee45bb8f1a943c2f875dcf8d2afa&libraries=services"></script>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7926a252f1fb745580cd660d91e49216&libraries=services"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+{# JS key#}
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c54c16826dbfd9c1ff4c0a53176f989&libraries=services"></script>
+
+{#Rest key#}
+{#<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e1f1d062ebb42c94e013e1b52dc2df5&libraries=services"></script>#}
 <script>
     function sample5_execDaumPostcode() {
         new daum.Postcode({
-            oncomplete: function(data) {
+            oncomplete: function (data) {
                 var addr = data.address; // 최종 주소 변수
 
                 // 주소 정보를 해당 필드에 넣는다.
                 document.getElementById("sample5_address").value = addr;
+
+                // 주소로 위도 경도 정보를 가져오는 부분
+                var geocoder = new kakao.maps.services.Geocoder();
+                geocoder.addressSearch(data.address, function (result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        var lat = result[0].y;
+                        var lng = result[0].x;
+
+                        // 위도 경도 값을 hidden input에 넣는다.
+                        document.getElementById("warehouse_latitude").value = lat;
+                        document.getElementById("warehouse_longitude").value = lng;
+                    }
+                });
             }
         }).open();
     }
 </script>
 <script>
-var MARKER_WIDTH = 33, // 기본, 클릭 마커의 너비
-    MARKER_HEIGHT = 36, // 기본, 클릭 마커의 높이
-    OFFSET_X = 12, // 기본, 클릭 마커의 기준 X좌표
-    OFFSET_Y = MARKER_HEIGHT, // 기본, 클릭 마커의 기준 Y좌표
-    OVER_MARKER_WIDTH = 40, // 오버 마커의 너비
-    OVER_MARKER_HEIGHT = 42, // 오버 마커의 높이
-    OVER_OFFSET_X = 13, // 오버 마커의 기준 X좌표
-    OVER_OFFSET_Y = OVER_MARKER_HEIGHT, // 오버 마커의 기준 Y좌표
-    SPRITE_MARKER_URL = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markers_sprites2.png', // 스프라이트 마커 이미지 URL
-    SPRITE_WIDTH = 126, // 스프라이트 이미지 너비
-    SPRITE_HEIGHT = 146, // 스프라이트 이미지 높이
-    SPRITE_GAP = 10; // 스프라이트 이미지에서 마커간 간격
+    var MARKER_WIDTH = 33,
+        MARKER_HEIGHT = 36,
+        OFFSET_X = 12,
+        OFFSET_Y = MARKER_HEIGHT,
+        OVER_MARKER_WIDTH = 40,
+        OVER_MARKER_HEIGHT = 42,
+        OVER_OFFSET_X = 13,
+        OVER_OFFSET_Y = OVER_MARKER_HEIGHT,
+        SPRITE_MARKER_URL = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markers_sprites2.png',
+        SPRITE_WIDTH = 126,
+        SPRITE_HEIGHT = 146,
+        SPRITE_GAP = 10;
 
-var markerSize = new kakao.maps.Size(MARKER_WIDTH, MARKER_HEIGHT), // 기본, 클릭 마커의 크기
-    markerOffset = new kakao.maps.Point(OFFSET_X, OFFSET_Y), // 기본, 클릭 마커의 기준좌표
-    overMarkerSize = new kakao.maps.Size(OVER_MARKER_WIDTH, OVER_MARKER_HEIGHT), // 오버 마커의 크기
-    overMarkerOffset = new kakao.maps.Point(OVER_OFFSET_X, OVER_OFFSET_Y), // 오버 마커의 기준 좌표
-    spriteImageSize = new kakao.maps.Size(SPRITE_WIDTH, SPRITE_HEIGHT); // 스프라이트 이미지의 크기
+    var markerSize = new kakao.maps.Size(MARKER_WIDTH, MARKER_HEIGHT),
+        markerOffset = new kakao.maps.Point(OFFSET_X, OFFSET_Y),
+        overMarkerSize = new kakao.maps.Size(OVER_MARKER_WIDTH, OVER_MARKER_HEIGHT),
+        overMarkerOffset = new kakao.maps.Point(OVER_OFFSET_X, OVER_OFFSET_Y),
+        spriteImageSize = new kakao.maps.Size(SPRITE_WIDTH, SPRITE_HEIGHT);
 
-var positions = [  // 마커의 위치
+    var positions = [
         {% for warehouse in warehouses %}
-            new kakao.maps.LatLng({{ warehouse.warehouse_latitude }}, {{ warehouse.warehouse_longitude }})
+    new kakao.maps.LatLng({{ warehouse.warehouse_latitude }}, {{ warehouse.warehouse_longitude }}),
         {% endfor %}
-    ],
-    selectedMarker = null; // 클릭한 마커를 담을 변수
+        ];
 
-var initialLat = {% if warehouses %}{{ warehouses.0.warehouse_latitude }}{% else %}37.337593703990265{% endif %};
-var initialLng = {% if warehouses %}{{ warehouses.0.warehouse_longitude }}{% else %}127.26773738380555{% endif %};
+    var selectedMarker = null;
+    {#{ #만약에 사용자의 창고 정보가 존재한다면 가장 처음 창고를 처음에 보여주는 것으로# }#}
+    {% if warehouses %}
+    var initialLat = {{ warehouses.0.warehouse_latitude }};
+    var initialLng = {{ warehouses.0.warehouse_longitude }};
+    {#{ #아니라면 학교 위치 ㅎㅎ# }#}
+    {% else %}
+    var initialLat = 37.337593703990265;
+    var initialLng = 127.26773738380555;
+    {% endif %}
 
-var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-    mapOption = {
-                center: new kakao.maps.LatLng(initialLat, initialLng), // 지도의 중심좌표
-                level: 3 // 지도의 확대 레벨
+    var mapContainer = document.getElementById('map'),
+        mapOption = {
+            center: new kakao.maps.LatLng(initialLat, initialLng),
+            level: 5
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    for (var i = 0, len = positions.length; i < len; i++) {
+        var gapX = (MARKER_WIDTH + SPRITE_GAP),
+            originY = (MARKER_HEIGHT + SPRITE_GAP) * i,
+            overOriginY = (OVER_MARKER_HEIGHT + SPRITE_GAP) * i,
+            normalOrigin = new kakao.maps.Point(0, originY),
+            clickOrigin = new kakao.maps.Point(gapX, originY),
+            overOrigin = new kakao.maps.Point(gapX * 2, overOriginY);
+
+        addMarker(positions[i], normalOrigin, overOrigin, clickOrigin);
+    }
+
+    function addMarker(position, normalOrigin, overOrigin, clickOrigin) {
+        var normalImage = createMarkerImage(markerSize, markerOffset, normalOrigin),
+            overImage = createMarkerImage(overMarkerSize, overMarkerOffset, overOrigin),
+            clickImage = createMarkerImage(markerSize, markerOffset, clickOrigin);
+
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: position,
+            image: normalImage
+        });
+
+        marker.normalImage = normalImage;
+
+        kakao.maps.event.addListener(marker, 'mouseover', function () {
+            if (!selectedMarker || selectedMarker !== marker) {
+                marker.setImage(overImage);
+            }
+        });
+
+        kakao.maps.event.addListener(marker, 'mouseout', function () {
+            if (!selectedMarker || selectedMarker !== marker) {
+                marker.setImage(normalImage);
+            }
+        });
+
+        kakao.maps.event.addListener(marker, 'click', function () {
+            if (!selectedMarker || selectedMarker !== marker) {
+                !!selectedMarker && selectedMarker.setImage(selectedMarker.normalImage);
+                marker.setImage(clickImage);
+            }
+            selectedMarker = marker;
+        });
+    }
+
+    function createMarkerImage(markerSize, offset, spriteOrigin) {
+        return new kakao.maps.MarkerImage(
+            SPRITE_MARKER_URL,
+            markerSize,
+            {
+                offset: offset,
+                spriteOrigin: spriteOrigin,
+                spriteSize: spriteImageSize
+            }
+        );
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        var form = document.querySelector("form");
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            var formData = new FormData(form);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Form submission was successful
+                    updateMap();
+                }
             };
-
-var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-// 지도 위에 마커를 표시합니다
-for (var i = 0, len = positions.length; i < len; i++) {
-    var gapX = (MARKER_WIDTH + SPRITE_GAP), // 스프라이트 이미지에서 마커로 사용할 이미지 X좌표 간격 값
-        originY = (MARKER_HEIGHT + SPRITE_GAP) * i, // 스프라이트 이미지에서 기본, 클릭 마커로 사용할 Y좌표 값
-        overOriginY = (OVER_MARKER_HEIGHT + SPRITE_GAP) * i, // 스프라이트 이미지에서 오버 마커로 사용할 Y좌표 값
-        normalOrigin = new kakao.maps.Point(0, originY), // 스프라이트 이미지에서 기본 마커로 사용할 영역의 좌상단 좌표
-        clickOrigin = new kakao.maps.Point(gapX, originY), // 스프라이트 이미지에서 마우스오버 마커로 사용할 영역의 좌상단 좌표
-        overOrigin = new kakao.maps.Point(gapX * 2, overOriginY); // 스프라이트 이미지에서 클릭 마커로 사용할 영역의 좌상단 좌표
-
-    // 마커를 생성하고 지도위에 표시합니다
-    addMarker(positions[i], normalOrigin, overOrigin, clickOrigin);
-}
-
-// 마커를 생성하고 지도 위에 표시하고, 마커에 mouseover, mouseout, click 이벤트를 등록하는 함수입니다
-function addMarker(position, normalOrigin, overOrigin, clickOrigin) {
-
-    // 기본 마커이미지, 오버 마커이미지, 클릭 마커이미지를 생성합니다
-    var normalImage = createMarkerImage(markerSize, markerOffset, normalOrigin),
-        overImage = createMarkerImage(overMarkerSize, overMarkerOffset, overOrigin),
-        clickImage = createMarkerImage(markerSize, markerOffset, clickOrigin);
-
-    // 마커를 생성하고 이미지는 기본 마커 이미지를 사용합니다
-    var marker = new kakao.maps.Marker({
-        map: map,
-        position: position,
-        image: normalImage
+            xhr.send(formData);
+        });
     });
 
-    // 마커 객체에 마커아이디와 마커의 기본 이미지를 추가합니다
-    marker.normalImage = normalImage;
+    function updateMap() {
+        fetch("/path-to-your-api-or-view/") // Replace with your URL to fetch updated warehouse data
+            .then(response => response.json())
+            .then(data => {
+                var positions = data.map(warehouse => new kakao.maps.LatLng(warehouse.warehouse_latitude, warehouse.warehouse_longitude));
+                updateMarkers(positions);
+            });
+    }
 
-    // 마커에 mouseover 이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'mouseover', function() {
+    var mapContainer = document.getElementById('map'),
+        mapOption = {
+            center: new kakao.maps.LatLng({% if warehouses %}{{ warehouses.0.warehouse_latitude }}, {{ warehouses.0.warehouse_longitude }} {% else %} 37.337593703990265, 127.26773738380555{% endif %}),
+    level: 7
+        };
 
-        // 클릭된 마커가 없고, mouseover된 마커가 클릭된 마커가 아니면
-        // 마커의 이미지를 오버 이미지로 변경합니다
-        if (!selectedMarker || selectedMarker !== marker) {
-            marker.setImage(overImage);
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+    var markers = [];
+
+    function updateMarkers(positions) {
+        // Clear existing markers
+        markers.forEach(marker => marker.setMap(null));
+        markers = [];
+
+        // Add new markers
+        for (var i = 0, len = positions.length; i < len; i++) {
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: positions[i]
+            });
+            markers.push(marker);
         }
-    });
-
-    // 마커에 mouseout 이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'mouseout', function() {
-
-        // 클릭된 마커가 없고, mouseout된 마커가 클릭된 마커가 아니면
-        // 마커의 이미지를 기본 이미지로 변경합니다
-        if (!selectedMarker || selectedMarker !== marker) {
-            marker.setImage(normalImage);
-        }
-    });
-
-    // 마커에 click 이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'click', function() {
-
-        // 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면
-        // 마커의 이미지를 클릭 이미지로 변경합니다
-        if (!selectedMarker || selectedMarker !== marker) {
-
-            // 클릭된 마커 객체가 null이 아니면
-            // 클릭된 마커의 이미지를 기본 이미지로 변경하고
-            !!selectedMarker && selectedMarker.setImage(selectedMarker.normalImage);
-
-            // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경합니다
-            marker.setImage(clickImage);
-        }
-
-        // 클릭된 마커를 현재 클릭된 마커 객체로 설정합니다
-        selectedMarker = marker;
-    });
-}
-
-// MakrerImage 객체를 생성하여 반환하는 함수입니다
-function createMarkerImage(markerSize, offset, spriteOrigin) {
-    var markerImage = new kakao.maps.MarkerImage(
-        SPRITE_MARKER_URL, // 스프라이트 마커 이미지 URL
-        markerSize, // 마커의 크기
-        {
-            offset: offset, // 마커 이미지에서의 기준 좌표
-            spriteOrigin: spriteOrigin, // 스트라이프 이미지 중 사용할 영역의 좌상단 좌표
-            spriteSize: spriteImageSize // 스프라이트 이미지의 크기
-        }
-    );
-
-    return markerImage;
-}
+    }
+    // Initial markers
+    updateMarkers([
+        {% for warehouse in warehouses %}
+    new kakao.maps.LatLng({{ warehouse.warehouse_latitude }}, {{ warehouse.warehouse_longitude }}),
+        {% endfor %}
+    ]);
 </script>
 {% endblock %}
-

@@ -251,133 +251,169 @@
 <!-- 지도 script 오는 곳 -->
 {% block map-script %}
 {#    JS key#}
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=bdc6ee45bb8f1a943c2f875dcf8d2afa&libraries=services"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c54c16826dbfd9c1ff4c0a53176f989"></script>
+{#    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c54c16826dbfd9c1ff4c0a53176f989&libraries=services"></script>#}
 {#Rest key#}
 {#    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7926a252f1fb745580cd660d91e49216&libraries=services"></script>#}
 
 <script>
-var MARKER_WIDTH = 33, // 기본, 클릭 마커의 너비
-    MARKER_HEIGHT = 36, // 기본, 클릭 마커의 높이
-    OFFSET_X = 12, // 기본, 클릭 마커의 기준 X좌표
-    OFFSET_Y = MARKER_HEIGHT, // 기본, 클릭 마커의 기준 Y좌표
-    OVER_MARKER_WIDTH = 40, // 오버 마커의 너비
-    OVER_MARKER_HEIGHT = 42, // 오버 마커의 높이
-    OVER_OFFSET_X = 13, // 오버 마커의 기준 X좌표
-    OVER_OFFSET_Y = OVER_MARKER_HEIGHT, // 오버 마커의 기준 Y좌표
-    SPRITE_MARKER_URL = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markers_sprites2.png', // 스프라이트 마커 이미지 URL
-    SPRITE_WIDTH = 126, // 스프라이트 이미지 너비
-    SPRITE_HEIGHT = 146, // 스프라이트 이미지 높이
-    SPRITE_GAP = 10; // 스프라이트 이미지에서 마커간 간격
+        var MARKER_WIDTH = 33,
+            MARKER_HEIGHT = 36,
+            OFFSET_X = 12,
+            OFFSET_Y = MARKER_HEIGHT,
+            OVER_MARKER_WIDTH = 40,
+            OVER_MARKER_HEIGHT = 42,
+            OVER_OFFSET_X = 13,
+            OVER_OFFSET_Y = OVER_MARKER_HEIGHT,
+            SPRITE_MARKER_URL = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markers_sprites2.png',
+            SPRITE_WIDTH = 126,
+            SPRITE_HEIGHT = 146,
+            SPRITE_GAP = 10;
 
-var markerSize = new kakao.maps.Size(MARKER_WIDTH, MARKER_HEIGHT), // 기본, 클릭 마커의 크기
-    markerOffset = new kakao.maps.Point(OFFSET_X, OFFSET_Y), // 기본, 클릭 마커의 기준좌표
-    overMarkerSize = new kakao.maps.Size(OVER_MARKER_WIDTH, OVER_MARKER_HEIGHT), // 오버 마커의 크기
-    overMarkerOffset = new kakao.maps.Point(OVER_OFFSET_X, OVER_OFFSET_Y), // 오버 마커의 기준 좌표
-    spriteImageSize = new kakao.maps.Size(SPRITE_WIDTH, SPRITE_HEIGHT); // 스프라이트 이미지의 크기
+        var markerSize = new kakao.maps.Size(MARKER_WIDTH, MARKER_HEIGHT),
+            markerOffset = new kakao.maps.Point(OFFSET_X, OFFSET_Y),
+            overMarkerSize = new kakao.maps.Size(OVER_MARKER_WIDTH, OVER_MARKER_HEIGHT),
+            overMarkerOffset = new kakao.maps.Point(OVER_OFFSET_X, OVER_OFFSET_Y),
+            spriteImageSize = new kakao.maps.Size(SPRITE_WIDTH, SPRITE_HEIGHT);
 
-var positions = [  // 마커의 위치
-        {% for warehouse in warehouses %}
-            new kakao.maps.LatLng({{ warehouse.warehouse_latitude }}, {{ warehouse.warehouse_longitude }})
-        {% endfor %}
-    ],
-    selectedMarker = null; // 클릭한 마커를 담을 변수
+        var positions = [
+            {% for warehouse in warehouses %}
+                new kakao.maps.LatLng({{ warehouse.warehouse_latitude }}, {{ warehouse.warehouse_longitude }}),
+            {% endfor %}
+        ];
 
-var initialLat = {% if warehouses %}{{ warehouses.0.warehouse_latitude }}{% else %}37.337593703990265{% endif %};
-var initialLng = {% if warehouses %}{{ warehouses.0.warehouse_longitude }}{% else %}127.26773738380555{% endif %};
+        var selectedMarker = null;
+            {#만약에 사용자의 창고 정보가 존재한다면 가장 처음 창고를 처음에 보여주는 것으로#}
+        {% if warehouses %}
+         var initialLat = {{ warehouses.0.warehouse_latitude }};
+         var initialLng = {{ warehouses.0.warehouse_longitude }};
+            {#아니라면 학교 위치 ㅎㅎ#}
+        {% else %}
+        var initialLat = 37.337593703990265;
+        var initialLng = 127.26773738380555;
+        {% endif %}
 
-var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-    mapOption = {
-                center: new kakao.maps.LatLng(initialLat, initialLng), // 지도의 중심좌표
-                level: 3 // 지도의 확대 레벨
+        var mapContainer = document.getElementById('map'),
+            mapOption = {
+                center: new kakao.maps.LatLng(initialLat, initialLng),
+                level: 5
             };
 
-var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+        var map = new kakao.maps.Map(mapContainer, mapOption);
 
-// 지도 위에 마커를 표시합니다
-for (var i = 0, len = positions.length; i < len; i++) {
-    var gapX = (MARKER_WIDTH + SPRITE_GAP), // 스프라이트 이미지에서 마커로 사용할 이미지 X좌표 간격 값
-        originY = (MARKER_HEIGHT + SPRITE_GAP) * i, // 스프라이트 이미지에서 기본, 클릭 마커로 사용할 Y좌표 값
-        overOriginY = (OVER_MARKER_HEIGHT + SPRITE_GAP) * i, // 스프라이트 이미지에서 오버 마커로 사용할 Y좌표 값
-        normalOrigin = new kakao.maps.Point(0, originY), // 스프라이트 이미지에서 기본 마커로 사용할 영역의 좌상단 좌표
-        clickOrigin = new kakao.maps.Point(gapX, originY), // 스프라이트 이미지에서 마우스오버 마커로 사용할 영역의 좌상단 좌표
-        overOrigin = new kakao.maps.Point(gapX * 2, overOriginY); // 스프라이트 이미지에서 클릭 마커로 사용할 영역의 좌상단 좌표
+        for (var i = 0, len = positions.length; i < len; i++) {
+            var gapX = (MARKER_WIDTH + SPRITE_GAP),
+                originY = (MARKER_HEIGHT + SPRITE_GAP) * i,
+                overOriginY = (OVER_MARKER_HEIGHT + SPRITE_GAP) * i,
+                normalOrigin = new kakao.maps.Point(0, originY),
+                clickOrigin = new kakao.maps.Point(gapX, originY),
+                overOrigin = new kakao.maps.Point(gapX * 2, overOriginY);
 
-    // 마커를 생성하고 지도위에 표시합니다
-    addMarker(positions[i], normalOrigin, overOrigin, clickOrigin);
-}
-
-// 마커를 생성하고 지도 위에 표시하고, 마커에 mouseover, mouseout, click 이벤트를 등록하는 함수입니다
-function addMarker(position, normalOrigin, overOrigin, clickOrigin) {
-
-    // 기본 마커이미지, 오버 마커이미지, 클릭 마커이미지를 생성합니다
-    var normalImage = createMarkerImage(markerSize, markerOffset, normalOrigin),
-        overImage = createMarkerImage(overMarkerSize, overMarkerOffset, overOrigin),
-        clickImage = createMarkerImage(markerSize, markerOffset, clickOrigin);
-
-    // 마커를 생성하고 이미지는 기본 마커 이미지를 사용합니다
-    var marker = new kakao.maps.Marker({
-        map: map,
-        position: position,
-        image: normalImage
-    });
-
-    // 마커 객체에 마커아이디와 마커의 기본 이미지를 추가합니다
-    marker.normalImage = normalImage;
-
-    // 마커에 mouseover 이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'mouseover', function() {
-
-        // 클릭된 마커가 없고, mouseover된 마커가 클릭된 마커가 아니면
-        // 마커의 이미지를 오버 이미지로 변경합니다
-        if (!selectedMarker || selectedMarker !== marker) {
-            marker.setImage(overImage);
-        }
-    });
-
-    // 마커에 mouseout 이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'mouseout', function() {
-
-        // 클릭된 마커가 없고, mouseout된 마커가 클릭된 마커가 아니면
-        // 마커의 이미지를 기본 이미지로 변경합니다
-        if (!selectedMarker || selectedMarker !== marker) {
-            marker.setImage(normalImage);
-        }
-    });
-
-    // 마커에 click 이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, 'click', function() {
-
-        // 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면
-        // 마커의 이미지를 클릭 이미지로 변경합니다
-        if (!selectedMarker || selectedMarker !== marker) {
-
-            // 클릭된 마커 객체가 null이 아니면
-            // 클릭된 마커의 이미지를 기본 이미지로 변경하고
-            !!selectedMarker && selectedMarker.setImage(selectedMarker.normalImage);
-
-            // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경합니다
-            marker.setImage(clickImage);
+            addMarker(positions[i], normalOrigin, overOrigin, clickOrigin);
         }
 
-        // 클릭된 마커를 현재 클릭된 마커 객체로 설정합니다
-        selectedMarker = marker;
-    });
-}
+        function addMarker(position, normalOrigin, overOrigin, clickOrigin) {
+            var normalImage = createMarkerImage(markerSize, markerOffset, normalOrigin),
+                overImage = createMarkerImage(overMarkerSize, overMarkerOffset, overOrigin),
+                clickImage = createMarkerImage(markerSize, markerOffset, clickOrigin);
 
-// MakrerImage 객체를 생성하여 반환하는 함수입니다
-function createMarkerImage(markerSize, offset, spriteOrigin) {
-    var markerImage = new kakao.maps.MarkerImage(
-        SPRITE_MARKER_URL, // 스프라이트 마커 이미지 URL
-        markerSize, // 마커의 크기
-        {
-            offset: offset, // 마커 이미지에서의 기준 좌표
-            spriteOrigin: spriteOrigin, // 스트라이프 이미지 중 사용할 영역의 좌상단 좌표
-            spriteSize: spriteImageSize // 스프라이트 이미지의 크기
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: position,
+                image: normalImage
+            });
+
+            marker.normalImage = normalImage;
+
+            kakao.maps.event.addListener(marker, 'mouseover', function() {
+                if (!selectedMarker || selectedMarker !== marker) {
+                    marker.setImage(overImage);
+                }
+            });
+
+            kakao.maps.event.addListener(marker, 'mouseout', function() {
+                if (!selectedMarker || selectedMarker !== marker) {
+                    marker.setImage(normalImage);
+                }
+            });
+
+            kakao.maps.event.addListener(marker, 'click', function() {
+                if (!selectedMarker || selectedMarker !== marker) {
+                    !!selectedMarker && selectedMarker.setImage(selectedMarker.normalImage);
+                    marker.setImage(clickImage);
+                }
+                selectedMarker = marker;
+            });
         }
-    );
 
-    return markerImage;
-}
+        function createMarkerImage(markerSize, offset, spriteOrigin) {
+            return new kakao.maps.MarkerImage(
+                SPRITE_MARKER_URL,
+                markerSize,
+                {
+                    offset: offset,
+                    spriteOrigin: spriteOrigin,
+                    spriteSize: spriteImageSize
+                }
+            );
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+        var form = document.querySelector("form");
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+            var formData = new FormData(form);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Form submission was successful
+                    updateMap();
+                }
+            };
+            xhr.send(formData);
+        });
+    });
+
+    function updateMap() {
+        fetch("/path-to-your-api-or-view/") // Replace with your URL to fetch updated warehouse data
+            .then(response => response.json())
+            .then(data => {
+                var positions = data.map(warehouse => new kakao.maps.LatLng(warehouse.warehouse_latitude, warehouse.warehouse_longitude));
+                updateMarkers(positions);
+            });
+    }
+
+    var mapContainer = document.getElementById('map'),
+        mapOption = {
+            center: new kakao.maps.LatLng({% if warehouses %}{{ warehouses.0.warehouse_latitude }}, {{ warehouses.0.warehouse_longitude }}{% else %}37.337593703990265, 127.26773738380555{% endif %}),
+            level: 7
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+    var markers = [];
+
+    function updateMarkers(positions) {
+        // Clear existing markers
+        markers.forEach(marker => marker.setMap(null));
+        markers = [];
+
+        // Add new markers
+        for (var i = 0, len = positions.length; i < len; i++) {
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: positions[i]
+            });
+            markers.push(marker);
+        }
+    }
+
+    // Initial markers
+    updateMarkers([
+        {% for warehouse in warehouses %}
+            new kakao.maps.LatLng({{ warehouse.warehouse_latitude }}, {{ warehouse.warehouse_longitude }}),
+        {% endfor %}
+    ]);
 </script>
 {% endblock %}
 
@@ -385,9 +421,7 @@ function createMarkerImage(markerSize, offset, spriteOrigin) {
 {% block chart-script %} {% load static %}
 <script src="{% static 'js/demo/chart-bar-demo.js' %}"></script>
 <script
-  src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
-  crossorigin="anonymous"
-></script>
+  src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 <script src="{% static 'js/datatables-simple-demo.js' %}"></script>
 
 {% endblock %}

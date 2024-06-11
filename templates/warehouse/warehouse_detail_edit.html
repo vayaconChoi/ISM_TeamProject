@@ -1,62 +1,105 @@
 {% extends 'base.html' %}
 {% block main-content %}
-        <main>
-          <!--Dash Title-->
-          <div class="container-fluid">
-            <div class="px-3 py-4">
-                <p><a href="/warehouse" style="text-decoration-line: none">Warehouse</a> / Detail</p>
-                <h1 class="fw-bold">00창고 정보 수정</h1>
-              <hr />
-            </div> 
-
-            <div class="p-5 pt-5 bg-light">
-                <div class="row">
-                  <div class="col-xl-12 col-md-12 mb-4">
+<main>
+    <!--Dash Title-->
+    <div class="container-fluid">
+        <div class="px-3 py-4">
+            <p><a href="/warehouse" style="text-decoration-line: none">Warehouse</a> / <a href="#"
+                    style="text-decoration-line: none">Detail</a> </p>
+            <h1 class="fw-bold">{{ warehouses.warehouse_name }}창고 정보 수정</h1>
+            <hr />
+        </div>
+        <div class="p-5 pt-5 bg-light">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 mb-4">
                     <div class="card shadow" style="height: 100%;">
-                      <div class="card-body">
-                        <h3><b>정보 수정</b></h3>
-                        <form method="post" class="py-1">
-                          <h5><b>주소</b></h5>
-                          <!--주소 입력 받는건 https://developers.kakao.com/docs/latest/ko/local/dev-guide-->
-                          <div class="row g-3 align-items-center mb-3">
-                            <div class="col-8">
-                              <input class="form-control" type="text" disabled>
-                            </div>
-                            <div class="col-auto">
-                              <a href="" class="btn btn-outline-primary">주소 수정</a>
-                            </div>
-                          </div>
-                          <h5><b>창고 정보</b></h5>
-                          <div class="row g-3 align-items-center mb-3">
-                            <div class="col-auto">
-                              <label for="warehouse-name" class="form-label"><b>창고 이름</b></label>
-                            </div>
-                            <div class="col-auto">
-                              <input type="text" name="warehouse-name" id="warehouse-name" class="form-control">
-                            </div> 
-                          </div>
-                          <div class="row g-3 align-items-center mb-3">
-                            <div class="col-auto">
-                              <label for="warehouse-capa" class="form-label"><b>창고 용량</b></label>
-                            </div>
-                            <div class="col-auto ">
-                              <input type="number" step="0.01" name="warehouse-capa" id="warehouse-capa" class="form-control">
-                            </div> 
-                            <div class="col-auto">
-                              <span id="passwordHelpInline" class="form-text">
-                                CBM (소수점 둘째자리)
-                              </span>
-                            </div>
-                          </div>
-                          <div class="d-flex flex-row-reverse">
-                            <button type="submit" class="btn btn-success">확인</button>
-                          </div>        
-                        </form>
-                      </div>
+                        <div class="card-body">
+                            <h3><b>정보 수정</b></h3>
+                            <form method="post" class="py-1">
+                                {% csrf_token %}
+                                <h5><b>주소</b></h5>
+                                <!--주소 입력 받는건 https://developers.kakao.com/docs/latest/ko/local/dev-guide-->
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-8">
+                                        {{ form.warehouse_address }}
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색" class="btn btn-outline-primary"><br>
+                                    </div>
+                                </div>
+                                <h5><b>창고 정보</b></h5>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="warehouse-name" class="form-label"><b>창고 이름</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                        {{ form.warehouse_name }}
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="warehouse-capa" class="form-label"><b>창고 용량</b></label>
+                                    </div>
+                                    <div class="col-auto ">
+                                        {{ form.warehouse_capacity }}
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="passwordHelpInline" class="form-text">
+                                            CBM (소수점 둘째자리)
+                                        </span>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="warehouse_latitude" name="warehouse_latitude">
+                                <input type="hidden" id="warehouse_longitude" name="warehouse_longitude">
+                                <div class="row g-3 align-items-center mb-3" style="display:none">
+                                    <div class="col-auto">
+                                        <label for="warehousing_user" class="form-label"><b>사용자 id</b></label>
+                                    </div>
+                                    <input type="hidden" name="user" value="{{ request.user.id }}">
+                                </div>
+                                <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-success">확인</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                  </div>
                 </div>
             </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
 
-        </main>
+{% block map-script %}
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+{# JS key#}
+<script type="text/javascript"
+    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c54c16826dbfd9c1ff4c0a53176f989&libraries=services"></script>
+{#Rest key#}
+{#<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e1f1d062ebb42c94e013e1b52dc2df5&libraries=services"></script>#}
+<script>
+    function sample5_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                var addr = data.address; // 최종 주소 변수
+
+                // 주소 정보를 해당 필드에 넣는다.
+                document.getElementById("sample5_address").value = addr;
+
+                // 주소로 위도 경도 정보를 가져오는 부분
+                var geocoder = new kakao.maps.services.Geocoder();
+                geocoder.addressSearch(data.address, function (result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        var lat = result[0].y;
+                        var lng = result[0].x;
+
+                        // 위도 경도 값을 hidden input에 넣는다.
+                        document.getElementById("warehouse_latitude").value = lat;
+                        document.getElementById("warehouse_longitude").value = lng;
+                    }
+                });
+            }
+        }).open();
+    }
+</script>
 {% endblock %}

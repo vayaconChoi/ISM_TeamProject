@@ -1,65 +1,93 @@
 {% extends "base.html" %}
 {% block main-content %}
-        <main>
-          <div class="container-fluid">
-            <!--Dash Title-->
-            <div class="px-3 py-4">
-              <p style="color: blue">Product</p>
-              <h1 class="fw-bold">Product Setting (상품 설정)</h1>
-              <hr />
-              <p>상품 바코드 정보를 입력하세요</p>
-            </div>
-
-            <div class="p-3 pt-5 bg-light">
-              <div class="row">
+<main>
+    <div class="container-fluid">
+        <!--Dash Title-->
+        <div class="px-3 py-4">
+            <p style="color: blue">Product</p>
+            <h1 class="fw-bold">Product Setting (상품 설정)</h1>
+            <hr />
+            <p>상품 바코드 정보를 입력하세요</p>
+        </div>
+        <div class="p-3 pt-5 bg-light">
+            <div class="row">
                 <div class="col-lg-4 col-md-12 mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h2><b>바코드 입력</b></h2>
-                      <form>
-                        <label for="selectFruit" class="form-label">과일 선택</label>
-                        <select class="form-select mb-2" name="" id="selectFruit">
-                          <option selected>과일을 선택하세요</option>
-                          <option value="apple">사과</option>
-                          <option value="pear">배</option>
-                        </select>
-                        <label for="barcodeInput" class="form-label">바코드</label>
-                        <input type="text" name="barcode" id="barcodeInput" class="form-control mb-4" />
-                        <button type="submit" class="btn btn-primary">입력</button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2><b>바코드 입력</b></h2>
+                            <form method="POST" class="py-1">
+                                {% csrf_token %}
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="row g-3 align-items-center mb-3">
+                                        <div class="col-auto">
+                                            <label for="barcode_fruit" class="form-label"><b>과일 품목</b></label>
+                                        </div>
+                                        <div class="col-auto">
+                                            {{ form.fruit }}
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center mb-3">
+                                        <div class="col-auto">
+                                            <label for="barcode_origin" class="form-label"><b>원산지</b></label>
+                                        </div>
+                                        <div class="col-auto">
+                                            {{ form.origin }}
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center mb-3">
+                                        <div class="col-auto">
+                                            <label for="barcode_id" class="form-label"><b>바코드</b></label>
+                                        </div>
+                                        <div class="col-auto">
+                                            {{ form.barcode_id }}
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center mb-3" style="display:none">
+                                        <div class="col-auto">
+                                            <label for="warehousing_user" class="form-label"><b>사용자 id</b></label>
+                                        </div>
+                                        <input type="hidden" name="user" value="{{ request.user.id }}">
+                                    </div>
 
-                <div class="col-lg-8 col-md-12 mb-2">
-                  <div class="card">
-                    <div class="card-body">
-                      <h2><b>상품 현황</b></h2>
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>바코드</th>
-                            <th>상품명</th>
-                            <th>원산지</th>
-                            <th>바코드 수정</th>
-                            <th>바코드 삭제</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <th>0000000000000</th>
-                            <th>중품 사과</th>
-                            <th>청송</th>
-                            <th><a class="btn btn-outline-primary m-1" href="/product/edit/1">Edit</a></th>
-                            <th><a class="btn btn-outline-danger m-1" href="">Delete</a></th>
-                          </tr>
-                        </tbody>
-                      </table>
+                                    <div class="d-flex flex-row-reverse">
+                                        <button type="submit" class="btn btn-success">입고</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
+                <div class="col-lg-8 col-md-12 mb-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2><b>상품 현황</b></h2>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>바코드</th>
+                                        <th>상품명</th>
+                                        <th>원산지</th>
+                                        <th>바코드 수정</th>
+                                        <th>바코드 삭제</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for barcode in barcodes %}
+                                    <tr>
+                                        <th>{{ barcode.barcode_id }}</th>
+                                        <th>{{ barcode.fruit.fruit_name}}</th>
+                                        <th>{{ barcode.origin.origin_location }}</th>
+                                        <th><a class="btn btn-outline-primary m-1" href="{% url 'product_edit' barcode.barcode_id %}">Edit</a></th>
+                                        <th><a class="btn btn-outline-danger m-1" href="{% url 'product_delete' barcode.barcode_id %}">Delete</a></th>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </main>
+        </div>
+    </div>
+</main>
 {% endblock %}

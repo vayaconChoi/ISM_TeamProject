@@ -1,176 +1,190 @@
 {% extends "base.html" %}
 {% block main-content %}
-        <main>
-          <!--Dash Title-->
-          <div class="container-fluid">
-            <div class="px-3 py-4">
-                <p><a href="/inventory" style="text-decoration-line: none">Inventory</a> / <a href="#" style="text-decoration-line: none">Warehousing</a></p>
-                <h1 class="fw-bold">Warehousing Product (상품 입고)</h1>
-              <hr />
-              <p>바코드를 스캔하거나 직접 입력하여 입고를 관리하세요.</p>
-              <a href="/inventory" class="mt-2 btn btn-outline-secondary"><i class="fa-solid fa-backward"></i> back</a>
-            </div>
-
-            <div class="p-5 pt-5 bg-light">
-                <div class="row">
-                    <!-- 재고 입고 화면 -->
-                    <div class="col-xl-7 col-md-12 mb-4">
-                        <div class="card shadow" style="height: 100%;">
-                          <div class="card-body">
+<main>
+    <!--Dash Title-->
+    <div class="container-fluid">
+        <div class="px-3 py-4">
+            <p><a href="/inventory" style="text-decoration-line: none">Inventory</a> / <a href="#"
+                    style="text-decoration-line: none">Warehousing</a></p>
+            <h1 class="fw-bold">Warehousing Product (상품 입고)</h1>
+            <hr />
+            <p>바코드를 스캔하거나 직접 입력하여 입고를 관리하세요.</p>
+            <a href="/inventory" class="mt-2 btn btn-outline-secondary"><i class="fa-solid fa-backward"></i> back</a>
+        </div>
+        <div class="p-5 pt-5 bg-light">
+            <div class="row">
+                <!-- 재고 입고 화면 -->
+                <div class="col-xl-7 col-md-12 mb-4">
+                    <div class="card shadow" style="height: 100%;">
+                        <div class="card-body">
                             <h3><b>상품 입고하기</b></h3>
-                                <!--if 조회된 상품이 없음-->
-                                <form method="post" class="my-3">
-                                  <div class="row g-3 align-items-center mb-3">
+                            <!--if 조회된 상품이 없음-->
+                            <form method="post" class="my-3">
+                                {% csrf_token %}
+                                <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
-                                      <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
-                                    
+                                        <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
                                     </div>
                                     <div class="col-8">
-                                      <div class="input-group">
-                                        <input type="text" name="barcode" id="barcodeInput" class="form-control " placeholder="바코드를 스캔하거나 직접 입력하세요."/>
-                                        <button type="submit" class="btn btn-primary" onclick="alert('중품 사과, 원산지:청송')">상품조회</button>
-                                    
-                                      </div> 
-                                    </div> 
-                                  </div> 
-                                </form>
-                                <!--else-->
-                                <div class="row">
-                                  <div class="mb-3"><b>바코드: </b>000000000<br><b>상품명: </b>중품사과</div>
-                                  <div class="col-auto mb-3">
+                                        <div class="input-group">
+                                            {{ form.barcode }}
+                                            <button type="submit" class="btn btn-primary">상품조회</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            {# <!--else-->#}
+                            <div class="row">
+                                <div class="mb-3"><b>바코드: </b>{{ barcode.barcode_id }}<br><b>상품명: </b>{{ barcode.fruit.fruit_name }}<br><b>원산지: </b>{{ barcode.origin.origin_location }}</div>
+                                <div class="col-auto mb-3">
                                     <button class="btn btn-outline-primary">상품 수정</button>
-                                  </div>
                                 </div>
-                                <div class="col-auto">
-                                    <label for="warehouse_name" class="form-label"><b>창고 이름</b></label>
-                                </div>
-                                <select name="{{ form.warehouse.name }}" id="{{ form.warehouse.id_for_label }}">
-                                <option selected>입고 창고를 선택하세요</option>
-                                            {% for warehouse in form.warehouse.field.queryset %}
-                                                <option value="{{ warehouse.pk }}">{{ warehouse.warehouse_name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                <form method="post" class="py-1">
-                                  <div class="row g-3 align-items-center mb-3">
-                                    <div class="col-auto">
-                                      <label for="inbound-time" class="form-label"><b>입고 시각</b></label>
-                                    </div>
-                                    <div class="col-auto">
-                                      <input type="datetime-local" name="inbound-time" id="inbound-time" class="form-control">
-                                    </div> 
-                                  </div>
-                                  <div class="row g-3 align-items-center mb-3">
-                                    <div class="col-auto">
-                                      <label for="inbound-quantity" class="form-label"><b>입고 수량</b></label>
-                                    </div>
-                                    <div class="col-auto">
-                                      <input type="number" name="inbound-quantity" id="inbound-quantity" class="form-control">
-                                    </div>
-                                    <div class="col-auto">
-                                      <span id="passwordHelpInline" class="form-text">
-                                        박스 단위로 입력하세요. <br> 바코드를 스캔하는 만큼 수량이 증가합니다.
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div class="row g-3 align-items-center mb-3">
-                                    <div class="col-auto">
-                                      <label for="inbound-price" class="form-label"><b>입고 가격</b></label>
-                                    </div>
-                                    <div class="col-auto">
-                                      <input type="number" name="inbound-price" id="inbound-price" class="form-control">
-                                    </div> 
-                                  </div>
-                                  <div class="d-flex flex-row-reverse">
-                                    <button type="submit" class="btn btn-success">입고</button>
-                                  </div>
-                                  
-                                </form>
                             </div>
+                            {% if barcode %}
+                            <form method="POST" class="py-1">
+                                {% csrf_token %}
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="warehouse_name" class="form-label"><b>창고 이름</b></label>
+                                    </div>
+                                    <select class="form-select mb-2" name="{{ form.warehouse.name }}"
+                                        id="{{ form.warehouse.id_for_label }}">
+                                        {% for warehouse in form.warehouse.field.queryset %}
+                                        <option value="{{ warehouse.pk }}">{{ warehouse.warehouse_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="inbound-time" class="form-label"><b>입고 시각</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                        {{ form.warehousing_time }}
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="inbound-quantity" class="form-label"><b>입고 수량</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                        {{ form.warehousing_quantity }}
+                                    </div>
+                                    <div class="col-auto">
+                                        <span id="passwordHelpInline" class="form-text">
+                                            박스 단위로 입력하세요. <br> 바코드를 스캔하는 만큼 수량이 증가합니다.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="inbound-price" class="form-label"><b>입고 가격</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                        {{ form.warehousing_price }}
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center mb-3" style="display:none">
+                                    <div class="col-auto">
+                                        <label for="warehousing_user" class="form-label"><b>사용자 id</b></label>
+                                    </div>
+                                    <input type="hidden" name="user" value="{{ request.user.id }}">
+                                </div>
+                                <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-success">입고</button>
+                                </div>
+                            </form>
+                            {% endif %}
                         </div>
                     </div>
-                    <!-- 재고 입고 현황 -->
-                    <div class="col-xl-5 col-md-12 mb-4">
-                      <div class="card shadow" style="height:100%">
+                </div>
+                <!-- 재고 입고 현황 -->
+                <div class="col-xl-5 col-md-12 mb-4">
+                    <div class="card shadow" style="height:100%">
                         <div class="card-body">
-                            <h3><b>{{ current_month}}월 출고 비율</b></h3>
+                            <h3><b>{{ current_month }}월 입고 비율</b></h3>
                             <canvas id="WarehousePie" width="100%" height="70px"></canvas>
                         </div>
-                      </div>
                     </div>
-                    <div class="col-12">
-                      <div class="card mb-4 shadow">
+                </div>
+                <div class="col-12">
+                    <div class="card mb-4 shadow">
                         <div class="card-header">
-                          <i class="fas fa-chart-bar me-1"></i>
-                                입고 History
+                            <i class="fas fa-chart-bar me-1"></i>
+                            입고 History
                         </div>
                         <div class="card-body">
-                          <h3><b>과거 입고내역</b></h3>
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th>입고번호</th>
-                                <th>과일명</th>
-                                <th>바코드</th>
-                                <th>입고시각</th>
-                                <th>유통기한</th>
-                                <th>매입가</th>
-                                <th>입고량</th>
-                                <th>수정</th>
-                                <th>삭제</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            {% for warehousing in warehousings %}
-                              <tr>
-                                <th>{warehousing.warehousing_id}</th>
-                                <th>{}</th>
-                                <th>0000000000</th>
-                                <th>2024-05-08</th>
-                                <th>2024-06-30</th>
-                                <th>24,000</th>
-                                <th>300박스</th>
-                                <th><a href="warehousing/edit/1" class="btn btn-outline-primary ">Edit</a></th>
-                                <th><a href="" class="btn btn-outline-danger ">delete</a></th>
-                              </tr>
-                            {% endfor %}
-                            </tbody>
-                          </table>
+                            <h3><b>과거 입고내역</b></h3>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>입고번호</th>
+                                        <th>과일명</th>
+                                        <th>바코드</th>
+                                        <th>입고시각</th>
+                                        <th>유통기한</th>
+                                        <th>매입가</th>
+                                        <th>입고량</th>
+                                        <th>수정</th>
+                                        <th>삭제</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for warehousing in warehousings %}
+                                    <tr>
+                                        <th>{{ warehousing.warehousing_id}}</th>
+                                        <th>{{ warehousing.barcode.fruit.fruit_name}}</th>
+                                        <th>{{ warehousing.barcode_id }}</th>
+                                        <th>{{ warehousing.warehousing_time }}</th>
+                                        <th>{{ warehousing.warehousing_until }}</th>
+                                        <th>{{ warehousing.warehousing_price }}</th>
+                                        <th>{{ warehousing.warehousing_quantity }}</th>
+                                        <th><a href="{% url 'warehousing_edit' warehousing.warehousing_id %}"
+                                                class="btn btn-outline-primary ">Edit</a></th>
+                                        <th><a href="{% url 'delete_warehousing' warehousing.warehousing_id %}"
+                                                class="btn btn-outline-danger ">delete</a></th>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                      </div>
                     </div>
                 </div>
             </div>
-
-        </main>
+        </div>
+    </div>
+</main>
 {% endblock %}
 
 <!-- chart script -->
 {% block chart-script %}{% load static %}
-{#<script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>#}
-    <script>
-        // Python-generated data
-        var xValues = {{ labels_json|safe }};
-        var yValues = {{ quantities_json|safe }};
-        var barColors = ["red", "yellow", "blue", "green"];
-        var text = "{{ user_warehouses.warehouse_name }} 상품현황";
+<script>
+    // Python-generated data
+    var xValues = {{ labels_json| safe }};
+    var yValues = {{ quantities_json| safe }};
+    var barColors = ["red", "yellow", "blue", "green"];
+    var text = "{{ user_warehouses.warehouse_name }} 상품현황";
 
-        // Pie Chart
-        var ctx = document.getElementById("WarehousePie").getContext('2d');
-        var warePieChart = new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    data: yValues,
-                    backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: text,
-                }
+    // Pie Chart
+    var ctx = document.getElementById("WarehousePie").getContext('2d');
+    var warePieChart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: xValues,
+            datasets: [{
+                data: yValues,
+                backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: text,
             }
-        });
-    </script>
+        }
+    });
+</script>
 {% endblock %}

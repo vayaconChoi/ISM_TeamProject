@@ -5,7 +5,7 @@
           <div class="container-fluid">
             <div class="px-3 py-4">
                 <p><a href="/warehouse" style="text-decoration-line: none">Warehouse</a> / Detail</p>
-                <h1 class="fw-bold">00창고 상세 현황 (Details of 00 Warehouse)</h1>
+                <h1 class="fw-bold">Details of {{ warehouse.warehouse_name }} Warehouse</h1>
               <hr />
             </div> 
 
@@ -15,7 +15,7 @@
                         <div class="card shadow" style="height: 100%">
                             <div class="card-header">
                                 <i class="fas fa-chart-bar me-1"></i>
-                                00창고 재고 변화 추세
+                                {{ warehouse.warehouse_name }} 창고 재고 변화 추세
                             </div>
                             <div class="card-body">
                                 <canvas id="InventoryLine" width="100%" height="30"></canvas>
@@ -26,7 +26,7 @@
                         <div class="card shadow" style="height: 100%">
                             <div class="card-header">
                                 <i class="fas fa-chart-bar me-1"></i>
-                                00창고 재고 현황
+                                {{ warehouse.warehouse_name }} 창고 재고 현황
                             </div>
                             <div class="card-body">
                                 <canvas id="WarehousePie" width="100%" height="60"></canvas>
@@ -37,7 +37,7 @@
                         <div class="card shadow" style="height: 100%">
                             <div class="card-header">
                                 <i class="fas fa-chart-bar me-1"></i>
-                                00창고 재고 현황표
+                                {{ warehouse.warehouse_name }} 창고 재고 현황표
                             </div>
                             <div class="card-body">
                               <table class="table">
@@ -48,18 +48,21 @@
                                     <th>보관시작기간</th>
                                     <th>유통기한</th>
                                     <th>재고량</th>
-                                    <th>상세보기</th><!--상세보기는 inventory_item_detail.html로 이어짐-->
+                                    <th>상세보기</th>
+                                      <!--상세보기는 inventory_item_detail.html로 이어짐-->
                                   </tr>
                                 </thead>
                                 <tbody>
+                                {%  for warehousing in warehousings %}
                                   <tr>
-                                    <th>0000000000</th>
-                                    <th>중품 사과</th>
-                                    <th>2024-05-10</th>
-                                    <th>2024-08-30</th>
-                                    <th>100</th>
+                                    <th>{{ warehousing.warehousing_id }}</th>
+                                    <th>{{ warehousing.barcode.fruit.fruit_name}}</th>
+                                    <th>{{ warehousing.warehousing_time }}</th>
+                                    <th>{{ warehousing.warehousing_until }}</th>
+                                    <th>{{ warehousing.warehousing_quantity }}</th>
                                     <th><a class="btn btn-primary m-1" href="/inventory/1">Detail</a></th>
                                   </tr>
+                                {% endfor %}
                                 </tbody>
                               </table>
                             </div>
@@ -67,7 +70,7 @@
                     </div>
                 </div>
             </div>
-
+          </div>
         </main>
 
 {% endblock %}

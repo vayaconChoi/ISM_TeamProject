@@ -20,7 +20,7 @@
     <div class="p-3 pt-5 bg-light">
       <!--상품 개요-->
       <div class="row">
-        <div class="col-sm-6 col-xs-12">
+        <div class="col-sm-4 col-xs-12">
           <div class="card mb-4 shadow" style="height: 95%">
             <div class="card-header">
               <i class="fas fa-chart-bar me-1"></i>
@@ -29,29 +29,13 @@
             <div class="card-body">
               <h3 class="fw-bold mb-3">상품 정보</h3>
               <p class="">
-                <b>작물명</b> : 사과 <br />
-                <b>원산지</b> : 청송 <br />
+                <b>작물명</b> : {{ inventories.barcode.fruit.fruit_name }} <br />
+                <b>원산지</b> : {{ inventories.barcode.origin.origin_location}}<br />
               </p>
             </div>
           </div>
         </div>
-        <div class="col-sm-6 col-xs-12">
-          <div class="card mb-4 shadow" style="height: 95%">
-            <div class="card-header">
-              <i class="fas fa-chart-bar me-1"></i>
-              가격 정보
-            </div>
-            <div class="card-body">
-              <h3 class="fw-bold mb-3">가격 정보</h3>
-              <p class="">
-                <b>구매가격</b> : 00000원 <br />
-                <b>판매가격</b> : 00000원
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-6 col-xs-12">
+        <div class="col-sm-4 col-xs-12">
           <div class="card mb-4 shadow" style="height: 95%">
             <div class="card-header">
               <i class="fas fa-chart-bar me-1"></i>
@@ -60,13 +44,15 @@
             <div class="card-body">
               <h3 class="fw-bold mb-3">창고 정보</h3>
               <p class="">
-                <b>보관 창고</b> : 00창고 <br />
-                <b>창고 주소</b> : 경기도 00시 00군 00로 0000<br />
+                <b>보관 창고</b> : {{ inventories.warehouse.warehouse_name }} <br />
+                <br />
+                <b>창고 주소</b> : {{ inventories.warehouse.warehouse_address }}<br />
+                <b>창고 용량</b> : {{ inventories.warehouse.warehouse_capacity }} CBM <br />
               </p>
             </div>
           </div>
         </div>
-        <div class="col-sm-6 col-xs-12">
+        <div class="col-sm-4 col-xs-12">
           <div class="card mb-4 shadow" style="height: 95%">
             <div class="card-header">
               <i class="fas fa-chart-bar me-1"></i>
@@ -75,11 +61,7 @@
             <div class="card-body">
               <h3 class="fw-bold mb-3">보관 정보</h3>
               <p>
-                <b>재고량</b> : 100개 <br />
-                <b>보관시작</b> : 0000년 00월 00일 <br />
-                <b>유통기한</b> : 0000년 00월 00일 <br />
-                <br />
-                <b>보관 기간</b> : 최대 00일 <br />
+                <b>재고량</b> : {{ inventories.inventory_quantity }} <br />
               </p>
             </div>
           </div>
@@ -95,8 +77,7 @@
               과일 소매 시세
             </div>
             <div class="card-body p-4">
-{#              <!--이용자가 설정할 수 있게 만들기-->?이게 뭔 소리여#}
-{#                -> 해당 상품에 맞게 소매가격 추세표가 그려져야함#}
+              <!--이용자가 설정할 수 있게 만들기-->
               <h5 class="fw-bold mb-3">사과 소매 시장가격</h5>
               <canvas
                 id="myAreaChart"
