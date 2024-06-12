@@ -1,4 +1,4 @@
-<h5 class="fw-bold mb-3">사과 소매 시세</h5>
+<h5 class="fw-bold mb-3">{{ prod_name }} 소매 시세</h5>
 <canvas
   id="retailPriceChart"
   width="757"
@@ -26,7 +26,7 @@
       labels: date,
       datasets: [
         {
-          label: "사과 가격",
+          label: "{{ prod_name }} 가격",
           lineTension: 0.3,
           backgroundColor: "rgba(2,117,216,0.2)",
           borderColor: "rgba(2,117,216,1)",

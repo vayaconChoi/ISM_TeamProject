@@ -12,8 +12,7 @@ from django.shortcuts import render
 import joblib
 from sklearn.preprocessing import StandardScaler
 
-
-from .api import kamis, gonggong,naver,weather
+from .api import kamis, gonggong
 
 
 def index(request):
@@ -33,11 +32,13 @@ def index(request):
     user_id = request.user.id
     user_warehouses = Warehouse.objects.filter(user=user_id)
 
+    warehouse_inventory = Inventory.objects.select_related('warehouse').filter(user=user_id)
     context = {
         "retail_price": retail_price[1],
         "retail_date": retail_price[0],
-        # "auction_data": auction_data,
-        "warehouses": user_warehouses,
+        #"auction_data": auction_data,
+        "user_warehouses": user_warehouses,
+        "warehouse_inventory": warehouse_inventory
     }
     return render(request, 'index.html', context)
 
@@ -81,8 +82,19 @@ def inventory(request):
 def inventory_details(request,inventory_id):
     user_id = request.user.id
     inventories = Inventory.objects.get(inventory_id=inventory_id, user=user_id)
+
+    product_name = str(inventories.barcode.fruit) + "상품"
+    print(product_name)
+    # 소매 데이터 가져오기...
+    retail_price = kamis.data_for_graph(product_name)
+    print("소매 데이터 가져오기 성공")
+    print(retail_price)
+
     context = {
         "inventories":inventories,
+        "retail_price": retail_price[1],
+        "retail_date": retail_price[0],
+
     }
     return render(request, 'inventory/inventory_item_detail.html',context)
 
@@ -243,6 +255,19 @@ def warehousing_edit(request, warehousing_id):
         form = WarehousingForm(user_id, request.POST, instance=warehousing)
         if form.is_valid():
             form.save()
+            barcode = warehousing.barcode.barcode_id
+            warehouse_id = warehousing.warehouse.warehouse_id
+            inventory = Inventory.objects.get(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            shipping_delta = Shipping.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            warehousing_delta = Warehousing.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+
+            quantity = 0
+            for i in warehousing_delta:
+                quantity += i.warehousing_quantity
+            for i in shipping_delta:
+                quantity -= i.Shipping_quantity
+            inventory.inventory_quantity = quantity
+            inventory.save()
             return redirect('warehousing')
     else:
         form = WarehousingForm(user_id, instance=warehousing, initial={'warehousing_id': warehousing.warehousing_id})
@@ -251,6 +276,7 @@ def warehousing_edit(request, warehousing_id):
     warehouses = Warehouse.objects.filter(user=user_id)
     context = {
         'form': form,
+        'warehousing': warehousing,
         'warehousings': warehousings,
         'warehouses': warehouses
     }
@@ -261,6 +287,19 @@ def warehouseing_delete(request,warehousing_id):
     warehousings = Warehousing.objects.get(warehousing_id=warehousing_id, user=user)
     if request.method == 'POST':
         warehousings.delete()
+        barcode = warehousings.barcode.barcode_id
+        warehouse_id = warehousings.warehouse.warehouse_id
+        inventory = Inventory.objects.get(user_id=user, barcode=barcode, warehouse_id=warehouse_id)
+        shipping_delta = Shipping.objects.filter(user_id=user, barcode=barcode, warehouse_id=warehouse_id)
+        warehousing_delta = Warehousing.objects.filter(user_id=user, barcode=barcode, warehouse_id=warehouse_id)
+
+        quantity = 0
+        for i in warehousing_delta:
+            quantity += i.warehousing_quantity
+        for i in shipping_delta:
+            quantity -= i.Shipping_quantity
+        inventory.inventory_quantity = quantity
+        inventory.save()
         return redirect('warehousing')
     return render(request,"warehousing/warehousing_delete_confirm.html",{'warehousings':warehousings,'user':user})
 
@@ -334,6 +373,19 @@ def shipping_edit(request,shipping_id):
         form = ShippingForm(user_id, request.POST, instance=shipping)
         if form.is_valid():
             form.save()
+            barcode = shipping.barcode.barcode_id
+            warehouse_id = shipping.warehouse.warehouse_id
+            inventory = Inventory.objects.get(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            shipping_delta = Shipping.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            warehousing_delta = Warehousing.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+
+            quantity = 0
+            for i in warehousing_delta:
+                quantity += i.warehousing_quantity
+            for i in shipping_delta:
+                quantity -= i.Shipping_quantity
+            inventory.inventory_quantity = quantity
+            inventory.save()
             return redirect('shipping')
     else:
         form = ShippingForm(user_id, instance=shipping, initial={'shipping_id': shipping.shipping_id})
@@ -343,7 +395,8 @@ def shipping_edit(request,shipping_id):
     context = {
         'form': form,
         'shippings': shippings,
-        'warehouses': warehouses
+        'warehouses': warehouses,
+        'shipping':shipping
     }
     return render(request, 'shipping/shipping_edit.html', context)
 
@@ -352,6 +405,19 @@ def shipping_delete(request,shipping_id):
     shippings = Shipping.objects.get(shipping_id=shipping_id, user_id=user_id)
     if request.method == 'POST':
         shippings.delete()
+        barcode = shippings.barcode.barcode_id
+        warehouse_id = shippings.warehouse.warehouse_id
+        inventory = Inventory.objects.get(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+        shipping_delta = Shipping.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+        warehousing_delta = Warehousing.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+
+        quantity = 0
+        for i in warehousing_delta:
+            quantity += i.warehousing_quantity
+        for i in shipping_delta:
+            quantity -= i.Shipping_quantity
+        inventory.inventory_quantity = quantity
+        inventory.save()
         return redirect('shipping')
     return render(request,"shipping/shipping_delete_confirm.html",{'shippings':shippings,'user':user_id})
 
@@ -383,9 +449,22 @@ def warehouse(request):
 def warehouse_detail(request,warehouse_id):
     warehouses = Warehouse.objects.get(warehouse_id=warehouse_id)
     warehousings = Warehousing.objects.filter(user_id = request.user.id,warehouse_id = warehouse_id)
+    inventories = Inventory.objects.select_related('barcode').filter(warehouse_id=warehouse_id)
+
+    # 재고량 PieChart 데이터
+    quantity_list = [0, 0]
+    for i in inventories:
+        print(i.inventory_quantity)
+        if str(i.barcode.fruit) == '사과':
+            quantity_list[0] += i.inventory_quantity
+        else:
+            quantity_list[1] += i.inventory_quantity
+
+
     context = {
         'warehouse': warehouses,
-        'warehousings' : warehousings
+        'warehousings' : warehousings,
+        'quantity_list' : quantity_list
     }
     return render(request, "warehouse/warehouse_detail.html", context)
 
@@ -427,112 +506,10 @@ def warehouse_delete(request,warehouse_id):
     }
     return render(request, "warehouse/warehouse_delete_confirm.html", context)
 
-def load_model(model_path):
-    return joblib.load(model_path)
-
-def make_prediction(X,y):
-    return model.predict(X,y)
-
 def recommend(request):
-    naver_df = naver.get_naver_api()
-    weather_df = weather.weather_for_ML(90)
-
-    # scaler_instance = MLModel.objects.get(name="SScaler")
-    # scaler = load_model(scaler_instance.model_file.path)
-
-    # 두 데이터프레임을 합침
-    combined_df = pd.concat([weather_df,naver_df], axis=1)
-    combined_df.reset_index(drop=True,inplace=True)
-    combined_df.rename(columns={'평균기온':'평균기온',"평균풍속":"평균풍속","배 검색량":"배 검색량","사과 검색량":"사과 검색량"}, inplace=True)
-
-    def create_dataset(X, time_steps=30, future_step=10):
-        Xs = []
-        for i in range(len(X) - time_steps - future_step + 1):
-            Xs.append(X[i:(i + time_steps)].values.flatten())
-
-        return np.array(Xs)
-
-    X_train = create_dataset(combined_df)
-
-    # scaled_df = scaler.transform(combined_df)
-    # scaled_df.drop('index', axis=1, inplace=True)
-
-    # 최근 30일, 최근 60일, 최근 90일 데이터프레임 생성
-    recent_30_days = create_dataset(combined_df,30,10)
-    recent_60_days = create_dataset(combined_df,60,20)
-    recent_90_days = create_dataset(combined_df,90,30)
-
-    # Load Random Forest model
-    pear_high_10_instance = MLModel.objects.get(name="pear_high_10")
-    pear_high_10 = load_model(pear_high_10_instance.model_file.path)
-
-    pear_high_20_instance = MLModel.objects.get(name="pear_high_20")
-    pear_high_20 = load_model(pear_high_20_instance.model_file.path)
-
-    pear_high_30_instance = MLModel.objects.get(name="pear_high_30")
-    pear_high_30 = load_model(pear_high_30_instance.model_file.path)
-
-    pear_mid_10_instance = MLModel.objects.get(name="pear_mid_10")
-    pear_mid_10 = load_model(pear_mid_10_instance.model_file.path)
-
-    pear_mid_20_instance = MLModel.objects.get(name="pear_mid_20")
-    pear_mid_20 = load_model(pear_mid_20_instance.model_file.path)
-
-    pear_mid_30_instance = MLModel.objects.get(name="pear_mid_30")
-    pear_mid_30 = load_model(pear_mid_30_instance.model_file.path)
-
-    apple_high_10_instance = MLModel.objects.get(name="apple_high_10")
-    apple_high_10 = load_model(apple_high_10_instance.model_file.path)
-
-    apple_high_20_instance = MLModel.objects.get(name="apple_high_20")
-    apple_high_20 = load_model(apple_high_20_instance.model_file.path)
-
-    apple_high_30_instance = MLModel.objects.get(name="apple_high_30")
-    apple_high_30 = load_model(apple_high_30_instance.model_file.path)
-
-    apple_mid_10_instance = MLModel.objects.get(name="apple_mid_10")
-    apple_mid_10 = load_model(apple_mid_10_instance.model_file.path)
-
-    apple_mid_20_instance = MLModel.objects.get(name="apple_mid_20")
-    apple_mid_20 = load_model(apple_mid_20_instance.model_file.path)
-
-    apple_mid_30_instance = MLModel.objects.get(name="apple_mid_30")
-    apple_mid_30 = load_model(apple_mid_30_instance.model_file.path)
-
-    # Make predictions
-    # prediction_pear_high_30 = pear_high_10.predict(recent_30_days)
-    # prediction_pear_high_60 = pear_high_20.predict(recent_60_days)
-    # prediction_pear_high_90 = pear_high_30.predict(recent_90_days)
-    #
-    # prediction_pear_mid_30 = pear_mid_10.predict(recent_30_days)
-    # prediction_pear_mid_60 = pear_mid_20.predict(recent_60_days)
-    # prediction_pear_mid_90 = pear_mid_30.predict(recent_90_days)
-
-    prediction_apple_high_30 = apple_high_10.predict(recent_30_days)
-    # prediction_apple_high_60 = apple_high_20.predict(recent_60_days)
-    # prediction_apple_high_90 = apple_high_30.predict(recent_90_days)
-    #
-    # prediction_apple_mid_30 = apple_mid_10.predict(recent_30_days)
-    # prediction_apple_mid_60 = apple_mid_20.predict(recent_60_days)
-    # prediction_apple_mid_90 = apple_mid_30.predict(recent_90_days)
-
-
-    context = {
-        # 'prediction_pear_high_30': prediction_pear_high_30,
-        # 'prediction_pear_high_60': prediction_pear_high_60,
-        # 'prediction_pear_high_90': prediction_pear_high_90,
-        # 'prediction_pear_mid_30': prediction_pear_mid_30,
-        # 'prediction_pear_mid_60': prediction_pear_mid_60,
-        # 'prediction_pear_mid_90': prediction_pear_mid_90,
-        'prediction_apple_high_30': prediction_apple_high_30,
-        # 'prediction_apple_high_60': prediction_apple_high_60,
-        # 'prediction_apple_high_90': prediction_apple_high_90,
-        # 'prediction_apple_mid_30': prediction_apple_mid_30,
-        # 'prediction_apple_mid_60': prediction_apple_mid_60,
-        # 'prediction_apple_mid_90': prediction_apple_mid_90,
-    }
-    return render(request, 'recommend/recommend.html', context)
+    return render(request, "recommend/recommend_main.html")
 
 
 def recommend_detail(request):
     return render(request, "recommend/recommend_detail.html")
+

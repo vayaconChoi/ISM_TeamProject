@@ -80,5 +80,30 @@
     <!-- 재고변화 그래프 -->
     <script src="{% static 'js/inventory_chart/selling_chart.js' %}" ></script>
     <!-- 재고 현황 pie chart -->
-    <script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>
+    <script>
+  // Python-generated data
+  var xValues = ['사과','배'];
+  var yValues = {{ quantity_list| safe }};
+  var barColors = ["red", "#FEE7A0"];
+  var text = "상품현황";
+
+  // Pie Chart
+  var ctx = document.getElementById("WarehousePie").getContext('2d');
+  var warePieChart = new Chart(ctx, {
+      type: "pie",
+      data: {
+          labels: xValues,
+          datasets: [{
+              data: yValues,
+              backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
+          }]
+      },
+      options: {
+          title: {
+              display: true,
+              text: text,
+          }
+      }
+  });
+</script>
 {% endblock %}
