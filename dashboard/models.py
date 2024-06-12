@@ -3,6 +3,12 @@ from django.utils import timezone
 from datetime import timedelta
 from users import models as user_models
 
+class MLModel(models.Model):
+    name = models.CharField(max_length=255)
+    model_file = models.FileField(upload_to='models/')
+
+    def __str__(self):
+        return self.name
 
 class Warehouse(models.Model):
     warehouse_id = models.BigAutoField(primary_key=True)

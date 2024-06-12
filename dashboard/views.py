@@ -1,14 +1,17 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
-from django.template import loader
-from .models import Fruit,Origin,Inventory,Warehousing,Shipping,Warehouse, Barcode
+from .models import Fruit,Origin,Inventory,Warehousing,Shipping,Warehouse, Barcode, MLModel
 from .forms import FruitForm,OriginForm,InventoryForm,WarehousingForm,ShippingForm,WarehouseForm, BarcodeForm
 from datetime import datetime,timedelta
-from django.contrib import messages
 from users import models as user_models
-from collections import defaultdict
 import json
 from django.utils.dateparse import parse_datetime
+import numpy as np
+import pandas as pd
+from django.shortcuts import render
+import joblib
+from sklearn.preprocessing import StandardScaler
+
 
 from .api import kamis, gonggong,naver,weather
 
@@ -424,12 +427,112 @@ def warehouse_delete(request,warehouse_id):
     }
     return render(request, "warehouse/warehouse_delete_confirm.html", context)
 
+def load_model(model_path):
+    return joblib.load(model_path)
+
+def make_prediction(X,y):
+    return model.predict(X,y)
+
 def recommend(request):
-    naver.get_naver_api()
-    weather.weather_for_ML(3)
-    return render(request, "recommend/recommend_main.html")
+    naver_df = naver.get_naver_api()
+    weather_df = weather.weather_for_ML(90)
+
+    # scaler_instance = MLModel.objects.get(name="SScaler")
+    # scaler = load_model(scaler_instance.model_file.path)
+
+    # 두 데이터프레임을 합침
+    combined_df = pd.concat([weather_df,naver_df], axis=1)
+    combined_df.reset_index(drop=True,inplace=True)
+    combined_df.rename(columns={'평균기온':'평균기온',"평균풍속":"평균풍속","배 검색량":"배 검색량","사과 검색량":"사과 검색량"}, inplace=True)
+
+    def create_dataset(X, time_steps=30, future_step=10):
+        Xs = []
+        for i in range(len(X) - time_steps - future_step + 1):
+            Xs.append(X[i:(i + time_steps)].values.flatten())
+
+        return np.array(Xs)
+
+    X_train = create_dataset(combined_df)
+
+    # scaled_df = scaler.transform(combined_df)
+    # scaled_df.drop('index', axis=1, inplace=True)
+
+    # 최근 30일, 최근 60일, 최근 90일 데이터프레임 생성
+    recent_30_days = create_dataset(combined_df,30,10)
+    recent_60_days = create_dataset(combined_df,60,20)
+    recent_90_days = create_dataset(combined_df,90,30)
+
+    # Load Random Forest model
+    pear_high_10_instance = MLModel.objects.get(name="pear_high_10")
+    pear_high_10 = load_model(pear_high_10_instance.model_file.path)
+
+    pear_high_20_instance = MLModel.objects.get(name="pear_high_20")
+    pear_high_20 = load_model(pear_high_20_instance.model_file.path)
+
+    pear_high_30_instance = MLModel.objects.get(name="pear_high_30")
+    pear_high_30 = load_model(pear_high_30_instance.model_file.path)
+
+    pear_mid_10_instance = MLModel.objects.get(name="pear_mid_10")
+    pear_mid_10 = load_model(pear_mid_10_instance.model_file.path)
+
+    pear_mid_20_instance = MLModel.objects.get(name="pear_mid_20")
+    pear_mid_20 = load_model(pear_mid_20_instance.model_file.path)
+
+    pear_mid_30_instance = MLModel.objects.get(name="pear_mid_30")
+    pear_mid_30 = load_model(pear_mid_30_instance.model_file.path)
+
+    apple_high_10_instance = MLModel.objects.get(name="apple_high_10")
+    apple_high_10 = load_model(apple_high_10_instance.model_file.path)
+
+    apple_high_20_instance = MLModel.objects.get(name="apple_high_20")
+    apple_high_20 = load_model(apple_high_20_instance.model_file.path)
+
+    apple_high_30_instance = MLModel.objects.get(name="apple_high_30")
+    apple_high_30 = load_model(apple_high_30_instance.model_file.path)
+
+    apple_mid_10_instance = MLModel.objects.get(name="apple_mid_10")
+    apple_mid_10 = load_model(apple_mid_10_instance.model_file.path)
+
+    apple_mid_20_instance = MLModel.objects.get(name="apple_mid_20")
+    apple_mid_20 = load_model(apple_mid_20_instance.model_file.path)
+
+    apple_mid_30_instance = MLModel.objects.get(name="apple_mid_30")
+    apple_mid_30 = load_model(apple_mid_30_instance.model_file.path)
+
+    # Make predictions
+    # prediction_pear_high_30 = pear_high_10.predict(recent_30_days)
+    # prediction_pear_high_60 = pear_high_20.predict(recent_60_days)
+    # prediction_pear_high_90 = pear_high_30.predict(recent_90_days)
+    #
+    # prediction_pear_mid_30 = pear_mid_10.predict(recent_30_days)
+    # prediction_pear_mid_60 = pear_mid_20.predict(recent_60_days)
+    # prediction_pear_mid_90 = pear_mid_30.predict(recent_90_days)
+
+    prediction_apple_high_30 = apple_high_10.predict(recent_30_days)
+    # prediction_apple_high_60 = apple_high_20.predict(recent_60_days)
+    # prediction_apple_high_90 = apple_high_30.predict(recent_90_days)
+    #
+    # prediction_apple_mid_30 = apple_mid_10.predict(recent_30_days)
+    # prediction_apple_mid_60 = apple_mid_20.predict(recent_60_days)
+    # prediction_apple_mid_90 = apple_mid_30.predict(recent_90_days)
+
+
+    context = {
+        # 'prediction_pear_high_30': prediction_pear_high_30,
+        # 'prediction_pear_high_60': prediction_pear_high_60,
+        # 'prediction_pear_high_90': prediction_pear_high_90,
+        # 'prediction_pear_mid_30': prediction_pear_mid_30,
+        # 'prediction_pear_mid_60': prediction_pear_mid_60,
+        # 'prediction_pear_mid_90': prediction_pear_mid_90,
+        'prediction_apple_high_30': prediction_apple_high_30,
+        # 'prediction_apple_high_60': prediction_apple_high_60,
+        # 'prediction_apple_high_90': prediction_apple_high_90,
+        # 'prediction_apple_mid_30': prediction_apple_mid_30,
+        # 'prediction_apple_mid_60': prediction_apple_mid_60,
+        # 'prediction_apple_mid_90': prediction_apple_mid_90,
+    }
+    return render(request, 'recommend/recommend.html', context)
 
 
 def recommend_detail(request):
     return render(request, "recommend/recommend_detail.html")
-
