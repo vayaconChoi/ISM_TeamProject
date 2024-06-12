@@ -30,17 +30,19 @@ class WarehouseForm(forms.ModelForm):
                     'id': "sample5_address",
                     'placeholder': "주소",
                     'autocomplete': 'off',
-                }
+                    'readonly' : 'true'
+                },
 
             ), 'warehouse_name': forms.TextInput(
                 attrs={
                     'class': 'form-control',
                     'autocomplete': 'off',
                 }
-            ), 'warehouse_capacity': forms.TextInput(
+            ), 'warehouse_capacity': forms.NumberInput(
                 attrs={
                     'class': 'form-control',
                     'autocomplete': 'off',
+                    'step': '0.01',
                 }
             ),'warehouse_latitude': forms.HiddenInput(),
             'warehouse_longitude': forms.HiddenInput(),
@@ -57,11 +59,12 @@ class WarehouseForm(forms.ModelForm):
     #     self.instance.user = self.user
     #     return cleaned_data
 
+
 class WarehousingForm(forms.ModelForm):
-    def __init__(self, user_id, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.user_id = user_id
-        self.fields['warehouse'].queryset = Warehouse.objects.filter(user_id=user_id)
+        self.user = user
+        self.fields['warehouse'].queryset = Warehouse.objects.filter(user_id=user)
 
     class Meta:
         model = Warehousing
@@ -87,15 +90,9 @@ class WarehousingForm(forms.ModelForm):
                     'placeholder':"바코드를 스캔하거나 직접 입력하세요.",
                     'autocomplete': 'off',
                 }
-            )
+            ),'user': forms.HiddenInput()
         }
 
-    def save(self, commit=True):
-        warehousing = super().save(commit=False)
-        warehousing.user = self.user_instance
-        if commit:
-            warehousing.save()
-        return warehousing
 
 class ShippingForm(forms.ModelForm):
     def __init__(self, user_id, *args, **kwargs):
@@ -120,40 +117,7 @@ class ShippingForm(forms.ModelForm):
                 attrs={
                     'class': 'form-control'
                 }
-            )
-        }
-
-    def save(self, commit=True):
-        warehousing = super().save(commit=False)
-        warehousing.user = self.user_instance
-        if commit:
-            warehousing.save()
-        return warehousing
-
-class ShippingForm(forms.ModelForm):
-    def __init__(self, user_id, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user_id = user_id
-        self.fields['warehouse'].queryset = Warehouse.objects.filter(user_id=user_id)
-    class Meta:
-        model = Shipping
-        fields = ['Shipping_price','Shipping_quantity','Shipping_time',"warehouse",'barcode']
-        widgets = {
-            'Shipping_time': forms.TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'type': "datetime-local",
-                }
-
-            ),'Shipping_quantity': forms.TextInput(
-                attrs={
-                    'class': 'form-control'
-                }
-            ),'Shipping_price': forms.TextInput(
-                attrs={
-                    'class': 'form-control'
-                }
-            ),'barcode': forms.Select(
+            ),'barcode': forms.TextInput(
                  attrs={
                     'class':"form-control",
                     'placeholder':"바코드를 스캔하거나 직접 입력하세요.",

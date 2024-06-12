@@ -1,184 +1,222 @@
-{% extends "base.html" %}
-{% block main-content %}
-        <main>
-          <!--Dash Title-->
-          <div class="container-fluid">
-            <div class="px-3 py-4">
-                <p><a href="/inventory" style="text-decoration-line: none">Inventory</a> / <a href="#" style="text-decoration-line: none">Shipping</a></p>
-                <h1 class="fw-bold">Shipping Product (상품 출고)</h1>
-              <hr />
-              <p>바코드를 스캔하거나 직접 입력하여 입고를 관리하세요.</p>
-              <a href="/inventory" class="mt-2 btn btn-outline-secondary"><i class="fa-solid fa-backward"></i> back</a>
-            </div>
+{% extends "base.html" %} {% block main-content %}
+<main>
+  <!--Dash Title-->
+  <div class="container-fluid">
+    <div class="px-3 py-4">
+      <p>
+        <a href="/inventory" style="text-decoration-line: none">Inventory</a> /
+        <a href="#" style="text-decoration-line: none">Shipping</a>
+      </p>
+      <h1 class="fw-bold">Shipping Product (상품 출고)</h1>
+      <hr />
+      <p>바코드를 스캔하거나 직접 입력하여 입고를 관리하세요.</p>
+      <a href="/inventory" class="mt-2 btn btn-outline-secondary"
+        ><i class="fa-solid fa-backward"></i> back</a
+      >
+    </div>
 
-            <div class="p-5 pt-5 bg-light">
-                <div class="row">
-                    <!-- 재고 입고 화면 -->
-                    <div class="col-xl-7 col-md-12 mb-4">
-                        <div class="card shadow" style="height: 100%;">
-                          <div class="card-body">
-                            <h3><b>상품 출고하기</b></h3>
-                                <!--if 조회된 상품이 없음-->
-                                <form method="POST" class="my-3">
-                                    {% csrf_token %}
-                                  <div class="row g-3 align-items-center mb-3">
-                                    <div class="col-auto">
-                                      <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
-                                    </div>
-                                    <div class="col-8">
-                                      <div class="input-group">
-                                         {{ form.barcode }}
-{#                                        <input type="text" name="barcode" id="barcodeInput" class="form-control " placeholder="바코드를 스캔하거나 직접 입력하세요."/>#}
-                                        <button type="submit" class="btn btn-primary" onclick="alert({{ barcode_data.fruit.fruit_name}}, {{ barcode_data.origin.origin_location}})">상품조회</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                                <!--else-->
-                                <div class="row">
-                                  <div class="mb-3"><b>바코드: </b>{{ barcode.barcode_id }}<br><b>상품명: </b>{{ barcode.fruit.fruit_name }}</div>
-                                  <div class="col-auto mb-3">
-                                    <button class="btn btn-outline-primary">상품 수정</button>
-                                  </div>
-                                </div>
-
-                                <form method="POST" class="py-1">
-                                    {% csrf_token %}
-                                    <div class="row g-3 align-items-center mb-3">
-                                        <div class="col-auto">
-                                            <label for="warehouse_name" class="form-label"><b>창고 이름</b></label>
-                                        </div>
-                                        <select class="form-select mb-2 "name="{{ form.warehouse.name }}" id="{{ form.warehouse.id_for_label }}">
-                                            {% for warehouse in form.warehouse.field.queryset %}
-                                                <option value="{{ warehouse.pk }}">{{ warehouse.warehouse_name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="row g-3 align-items-center mb-3">
-                                        <div class="col-auto">
-                                            <label for="inbound-time" class="form-label"><b>출고 시각</b></label>
-                                        </div>
-                                        <div class="col-auto">
-                                            {{ form.Shipping_time }}
-                                        </div>
-                                    </div>
-                                  <div class="row g-3 align-items-center mb-3">
-                                    <div class="col-auto">
-                                      <label for="inbound-quantity" class="form-label"><b>출고 수량</b></label>
-                                    </div>
-                                    <div class="col-auto" >
-                                        {{ form.Shipping_quantity }}
-                                    </div>
-                                    <div class="col-auto">
-                                      <span id="passwordHelpInline" class="form-text">
-                                        박스 단위로 입력하세요. <br> 바코드를 스캔하는 만큼 수량이 증가합니다.
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div class="row g-3 align-items-center mb-3">
-                                    <div class="col-auto">
-                                      <label for="inbound-price" class="form-label"><b>출고 가격</b></label>
-                                    </div>
-                                    <div class="col-auto">
-                                        {{ form.Shipping_price }}
-                                    </div>
-                                  </div>
-                                    <div class="row g-3 align-items-center mb-3" style="display:none">
-                                    <div class="col-auto">
-                                      <label for="warehousing_user" class="form-label"><b>사용자 id</b></label>
-                                    </div>
-                                    <input type="hidden" name="user" value="{{ request.user.id }}">
-                                    </div>
-
-                                  <div class="d-flex flex-row-reverse">
-                                    <button type="submit" class="btn btn-success">출고</button>
-                                  </div>
-                                </form>
-                            </div>
-                        </div>
+    <div class="p-5 pt-5 bg-light">
+      <div class="row">
+        <!-- 재고 입고 화면 -->
+        <div class="col-xl-7 col-md-12 mb-4">
+          <div class="card shadow" style="height: 100%">
+            <div class="card-body">
+              <h3><b>상품 출고하기</b></h3>
+              <!--if 조회된 상품이 없음-->
+              {% if not barcode %}
+              <form method="POST" class="my-3">
+                {% csrf_token %}
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-auto">
+                    <label for="barcodeInput" class="col-form-label"
+                      ><b>바코드</b></label
+                    >
+                  </div>
+                  <div class="col-8">
+                    <div class="input-group">
+                      {{ form.barcode }}
+                      <button type="submit" class="btn btn-primary">
+                        상품조회
+                      </button>
                     </div>
-                    <!-- 재고 출고 현황 -->
-                    <div class="col-xl-5 col-md-12 mb-4">
-                      <div class="card shadow" style="height:100%">
-                        <div class="card-body">
-                          <h3><b>{{ current_month}}월 출고 비율</b></h3>
-                            {{ chart_html|safe }}
-                          <canvas id="WarehousePie" width="100%" height="70px"></canvas>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="card mb-4 shadow">
-                        <div class="card-header">
-                          <i class="fas fa-chart-bar me-1"></i>
-                                출고 History
-                        </div>
-                        <div class="card-body">
-                          <h3><b>과거 출고내역</b></h3>
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th>출고번호</th>
-                                <th>과일명</th>
-                                <th>바코드</th>
-                                <th>출고시각</th>
-                                <th>출고가</th>
-                                <th>출고량</th>
-                                <th>수정</th>
-                                <th>삭제</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            {% for shipping in shippings %}
-                              <tr>
-                                <th>{{ shipping.shipping_id }}</th>
-                                <th>{{ shipping.barcode.fruit.fruit_name}}</th>
-                                <th>{{ shipping.barcode_id }}</th>
-                                <th>{{ shipping.Shipping_time }}</th>
-                                <th>{{ shipping.Shipping_price}}</th>
-                                <th>{{ shipping.Shipping_quantity }}</th>
-                                <th><a href="{% url 'shipping_edit' shipping.shipping_id %}" class="btn btn-outline-primary ">Edit</a></th>
-                                <th><a href="{% url 'delete_shipping' shipping.shipping_id %}" class="btn btn-outline-danger ">delete</a></th>
-                              </tr>
-                            {% endfor %}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
+                  </div>
                 </div>
+              </form>
+              {% endif %} {% if barcode %}
+              <form method="POST" class="py-1">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="mb-3">
+                    <b>바코드: </b>{{ form.barcode }} <br />
+                    <b>상품명: </b> {{ barcode_info.fruit }}
+                    <br />
+                    <b>원산지: </b>{{ barcode_info.origin }}
+                  </div>
+                </div>
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-auto">
+                    <label for="warehouse_name" class="form-label"
+                      ><b>창고 이름</b></label
+                    >
+                  </div>
+                  <select
+                    class="form-select mb-2"
+                    name="{{ form.warehouse.name }}"
+                    id="{{ form.warehouse.id_for_label }}"
+                  >
+                    {% for warehouse in form.warehouse.field.queryset %}
+                    <option value="{{ warehouse.pk }}">
+                      {{ warehouse.warehouse_name }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-auto">
+                    <label for="inbound-time" class="form-label"
+                      ><b>출고 시각</b></label
+                    >
+                  </div>
+                  <div class="col-auto">{{ form.Shipping_time }}</div>
+                </div>
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-auto">
+                    <label for="inbound-quantity" class="form-label"
+                      ><b>출고 수량</b></label
+                    >
+                  </div>
+                  <div class="col-auto">{{ form.Shipping_quantity }}</div>
+                  <div class="col-auto">
+                    <span id="passwordHelpInline" class="form-text">
+                      박스 단위로 입력하세요. <br />
+                      바코드를 스캔하는 만큼 수량이 증가합니다.
+                    </span>
+                  </div>
+                </div>
+                <div class="row g-3 align-items-center mb-3">
+                  <div class="col-auto">
+                    <label for="inbound-price" class="form-label"
+                      ><b>출고 가격</b></label
+                    >
+                  </div>
+                  <div class="col-auto">{{ form.Shipping_price }}</div>
+                </div>
+                <div
+                  class="row g-3 align-items-center mb-3"
+                  style="display: none"
+                >
+                  <div class="col-auto">
+                    <label for="warehousing_user" class="form-label"
+                      ><b>사용자 id</b></label
+                    >
+                  </div>
+                  <input
+                    type="hidden"
+                    name="user"
+                    value="{{ request.user.id }}"
+                  />
+                </div>
+
+                <div class="d-flex flex-row-reverse">
+                  <button type="submit" class="btn btn-success">출고</button>
+                </div>
+              </form>
+            {% endif %}
             </div>
           </div>
-        </main>
+        </div>
+        <!-- 재고 출고 현황 -->
+        <div class="col-xl-5 col-md-12 mb-4">
+          <div class="card shadow" style="height: 100%">
+            <div class="card-body">
+              <h3><b>상품별 출고 비율</b></h3>
+              <canvas id="WarehousePie" width="100%" height="70px"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="card mb-4 shadow">
+            <div class="card-header">
+              <i class="fas fa-chart-bar me-1"></i>
+              출고 History
+            </div>
+            <div class="card-body">
+              <h3><b>과거 출고내역</b></h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>출고번호</th>
+                    <th>과일명</th>
+                    <th>바코드</th>
+                    <th>출고시각</th>
+                    <th>출고가</th>
+                    <th>출고량</th>
+                    <th>수정</th>
+                    <th>삭제</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for shipping in shippings %}
+                  <tr>
+                    <th>{{ shipping.shipping_id }}</th>
+                    <th>{{ shipping.barcode.fruit.fruit_name}}</th>
+                    <th>{{ shipping.barcode_id }}</th>
+                    <th>{{ shipping.Shipping_time }}</th>
+                    <th>{{ shipping.Shipping_price}}</th>
+                    <th>{{ shipping.Shipping_quantity }}</th>
+                    <th>
+                      <a
+                        href="{% url 'shipping_edit' shipping.shipping_id %}"
+                        class="btn btn-outline-primary"
+                        >Edit</a
+                      >
+                    </th>
+                    <th>
+                      <a
+                        href="{% url 'delete_shipping' shipping.shipping_id %}"
+                        class="btn btn-outline-danger"
+                        >delete</a
+                      >
+                    </th>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 {% endblock %}
 
 <!-- chart script -->
 {% block chart-script %}{% load static %}
-{#<script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>#}
-        <script>
-        // Python-generated data
-        var xValues = {{ labels_json|safe }};
-        var yValues = {{ quantities_json|safe }};
-        var barColors = ["red", "yellow", "blue", "green"];
-        var text = {{ warehouse.warehouse_name }} "상품현황";
+<script>
+  // Python-generated data
+  var xValues = ['사과','배'];
+  var yValues = {{ quantity_list|safe }};
+  var barColors = ["red", "#FEE7A0"];
+  var text = "상품현황";
 
-        // Pie Chart
-        var ctx = document.getElementById("WarehousePie").getContext('2d');
-        var warePieChart = new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    data: yValues,
-                    backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: text,
-                }
-            }
-        });
-    </script>
+  // Pie Chart
+  var ctx = document.getElementById("WarehousePie").getContext('2d');
+  var warePieChart = new Chart(ctx, {
+      type: "pie",
+      data: {
+          labels: xValues,
+          datasets: [{
+              data: yValues,
+              backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
+          }]
+      },
+      options: {
+          title: {
+              display: true,
+              text: text,
+          }
+      }
+  });
+</script>
 {% endblock %}

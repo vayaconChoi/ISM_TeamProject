@@ -1,33 +1,27 @@
 <h5 class="fw-bold">판매자 재고 현황</h5>
 <table class="table">
-    <thead>
+  <thead>
     <tr>
-        <th>창고명</th>
-        <th>작물명</th>
-        <th>보관시작기간</th>
-        <th>유통기한</th>
-        <th>재고량</th>
-        <th>상세보기</th>
+      <th>창고명</th>
+      <th>작물명</th>
+      <th>재고량</th>
+      <th>상세보기</th>
     </tr>
-    </thead>
-    <tbody>
-    {% for warehouse in warehouses %}
-      {% for inventory in warehouse.inventory_set.all %}
-        {% for warehousing in inventory.fruit.barcode_set.all %}
-          {% for wh in warehousing.warehousing_set.all %}
-            <tr>
-              <td>{{ warehouse.warehouse_name }}</td>
-              <td>{{ inventory.fruit.fruit_name }}</td>
-              <td>{{ wh.warehousing_time|date:"Y-m-d H:i" }}</td>
-              <td>{{ wh.warehousing_until|date:"Y-m-d H:i" }}</td>
-              <td>{{ inventory.inventory_quantity }}</td>
-              <td>
-                <a class="btn btn-primary m-1" href="{% url 'inventory_item_detail' inventory.inventory_id %}">상세 보기</a>
-              </td>
-            </tr>
-          {% endfor %}
-        {% endfor %}
-      {% endfor %}
+  </thead>
+  <tbody>
+    {% for inventory in warehouse_inventory %}
+    <tr>
+      <td>{{ inventory.warehouse.warehouse_name }}</td>
+      <td>{{ inventory.barcode.fruit }}</td>
+      <td>{{ inventory.inventory_quantity }}</td>
+      <td>
+        <a
+          class="btn btn-primary m-1"
+          href="{% url 'inventory_item_detail' inventory.inventory_id %}"
+          >상세 보기</a
+        >
+      </td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>

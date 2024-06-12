@@ -23,7 +23,7 @@ def index(request):
 
     # 경매 데이터 가져오기...
     # real 당일 데이터 (From AT_도매시장종합)
-    # auction_data = gonggong.get_live_auction()
+    auction_data = gonggong.get_live_auction()
     print("경매 데이터 가져오기 성공")
     # print(auction_data) # 다량이라 평시 주석처리
 
@@ -33,7 +33,7 @@ def index(request):
     context = {
         "retail_price": retail_price[1],
         "retail_date": retail_price[0],
-        # "auction_data": auction_data,
+        "auction_data": auction_data,
         "warehouses": user_warehouses,
     }
     return render(request, 'index.html', context)
@@ -43,31 +43,34 @@ def inventory(request):
     warehouses = Warehouse.objects.filter(user_id=user_id).select_related()
     user_warehouses = Warehouse.objects.filter(user_id=user_id)
     inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
-    # inventories = Inventory.objects.all()
-    aggregated_quantities = defaultdict(int)
+    aggregated_quantities = {
+        '사과':0,
+        '배':0
+    }
+
 
     for inventory in inventory_data:
-        aggregated_quantities[inventory.fruit_id] += inventory.inventory_quantity
+        # inventory에 있는 바코드로 해당 product 찾기
+        print(inventory.barcode)
+        prod_name = str(Barcode.objects.get(barcode_id=inventory.barcode).fruit)
+        print(prod_name)
+        aggregated_quantities[prod_name] += inventory.inventory_quantity
 
-    fruit_names = {fruit.fruit_id: fruit.fruit_name for fruit in Fruit.objects.all()}
-    labels = [fruit_names[fruit_id] for fruit_id in aggregated_quantities.keys()]
-    quantities = [quantity for quantity in aggregated_quantities.values()]
+    quantities = [aggregated_quantities["사과"], aggregated_quantities["배"]]
+    print(quantities)
 
-    # JSON 형식으로 변형... 이게 뭐노... 어렵다...
-    labels_json = json.dumps(labels, ensure_ascii=False)
+    # JSON 형식으로 변형
     quantities_json = json.dumps(quantities)
 
-    # 현재 월 가져오기
-    now = datetime.now()
-    current_month = now.month
+    warehouse_inventory = Inventory.objects.select_related('warehouse').filter(user=user_id)
+    print(warehouse_inventory)
 
     context = {
         'warehouses' : warehouses,
         'user_warehouses': user_warehouses,
-        'labels_json': labels_json,
+        'inventory_data': inventory_data,
         'quantities_json': quantities_json,
-        'current_month': current_month,
-        # 'inventories': inventories,
+        'warehouse_inventory': warehouse_inventory
     }
 
     return render(request, 'inventory/inventory_summary.html',context)
@@ -138,33 +141,36 @@ def product_delete(request,barcode_id):
 
 def warehousing(request):
     user_id = request.user.id
+
     warehouses = Warehouse.objects.filter(user_id=user_id).select_related()
     warehousings = Warehousing.objects.filter(user=user_id)
 
+    # 초반 form에서 받아오는 바코드임
     barcode = request.POST.get('barcode')
-
+    # 이 바코드 가지고, 원산지와 상품명을 받아와야 함
+    barcode_info ={}
+    if barcode:
+        barcode_info = Barcode.objects.get(barcode_id=barcode)
 
     # 파이차트를 위한 데이터 끌어 모으기
-    aggregated_quantities = defaultdict(int)
-    user_warehouses = Warehouse.objects.filter(user_id=user_id)
-    inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
-    for inventory in inventory_data:
-        aggregated_quantities[inventory.fruit_id] += inventory.inventory_quantity
+    aggregated_quantities = {
+        '사과': 0,
+        '배': 0
+    }
+    for 입고 in warehousings:
+        print(입고.barcode)
+        print(입고.warehousing_quantity)
+        # inventory에 해당하는 product 찾기
+        prod_name = str(Barcode.objects.get(barcode_id=입고.barcode).fruit)
+        print(prod_name)
+        aggregated_quantities[prod_name] = aggregated_quantities[prod_name] + 입고.warehousing_quantity
 
-    fruit_names = {fruit.fruit_id: fruit.fruit_name for fruit in Fruit.objects.all()}
-    labels = [fruit_names[fruit_id] for fruit_id in aggregated_quantities.keys()]
-    quantities = [quantity for quantity in aggregated_quantities.values()]
 
-    # JSON 형식으로 변형... 이게 뭐노... 어렵다...
-    labels_json = json.dumps(labels, ensure_ascii=False)
-    quantities_json = json.dumps(quantities)
-
-    # 현재 월 가져오기
-    now = datetime.now()
-    current_month = now.month
+    quantity_list = [aggregated_quantities['사과'], aggregated_quantities['배']]
+    print(quantity_list)
 
     # form 진행
-    form = WarehousingForm(user_id, request.POST or None)
+    form = WarehousingForm(user_id, request.POST or  None)
 
     if request.method == 'POST':
         if form.is_valid():
@@ -179,13 +185,11 @@ def warehousing(request):
 
     context = {
         'warehouses': warehouses,
-        'user_warehouses': user_warehouses,
-        'labels_json': labels_json,
-        'quantities_json': quantities_json,
-        'current_month': current_month,
-        'warehousings':warehousings,
-        'form':form,
+        'quantity_list': quantity_list,
+        'warehousings': warehousings,
+        'form': form,
         'barcode': barcode,
+        'barcode_info': barcode_info,
     }
     return render(request, "warehousing/warehousing.html",context)
 
@@ -213,8 +217,8 @@ def minus_inventory(instance, **kwargs):
             barcode=instance.barcode,
             user=instance.user
         )
-        if inventory.inventory_quantity >= instance.shipping_quantity:
-            inventory.inventory_quantity -= instance.shipping_quantity
+        if inventory.inventory_quantity >= instance.Shipping_quantity:
+            inventory.inventory_quantity -= instance.Shipping_quantity
             inventory.save()
         else:
             raise ValueError(f"재고가 부족합니다. 현재 재고: {inventory.inventory_quantity}, 출고 수량: {instance.shipping_quantity}")
@@ -222,7 +226,7 @@ def minus_inventory(instance, **kwargs):
         raise ValueError("재고 정보가 존재하지 않습니다.")
 
 def put_warehousing_until(instance,**kwargs):
-    instance.warehousing_until = instance.warehousing_time + timedelta(days = instance.barcode.fruit.fruit_plus_day)
+    instance.warehousing_until = instance.warehousing_time + timedelta(days = instance.barcode.fruit.fruit_day_plus)
     instance.save()
 
 def warehousing_edit(request, warehousing_id):
@@ -259,25 +263,35 @@ def warehouseing_delete(request,warehousing_id):
 
 def shipping(request):
     user_id = request.user.id
-    user_warehouses = Warehouse.objects.filter(user_id=user_id)
-    inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
-    aggregated_quantities = defaultdict(int)
-    shippingments = Shipping.objects.filter(warehouse__in=user_warehouses).select_related('barcode__fruit')
-    barcode = Barcode.objects.filter(user=user_id)
-    for inventory in inventory_data:
-        aggregated_quantities[inventory.fruit_id] += inventory.inventory_quantity
 
-    fruit_names = {fruit.fruit_id: fruit.fruit_name for fruit in Fruit.objects.all()}
-    labels = [fruit_names[fruit_id] for fruit_id in aggregated_quantities.keys()]
-    quantities = [quantity for quantity in aggregated_quantities.values()]
+    warehouses = Warehouse.objects.filter(user_id=user_id)
+    inventory_data = Inventory.objects.filter(warehouse__in=warehouses)
 
-    # JSON 형식으로 변형... 이게 뭐노... 어렵다...
-    labels_json = json.dumps(labels, ensure_ascii=False)
-    quantities_json = json.dumps(quantities)
+    shippings = Shipping.objects.filter(user_id=user_id)
 
-    # 현재 월 가져오기
-    now = datetime.now()
-    current_month = now.month
+    # 초반 form에서 받아오는 바코드임
+    barcode = request.POST.get('barcode')
+    # 이 바코드 가지고, 원산지와 상품명을 받아와야 함
+    barcode_info ={}
+    if barcode:
+        barcode_info = Barcode.objects.get(barcode_id=barcode)
+
+    # 파이차트를 위한 데이터 끌어 모으기
+    aggregated_quantities = {
+        '사과': 0,
+        '배': 0
+    }
+
+    for 출고 in shippings:
+        print(출고.barcode)
+        print(출고.Shipping_quantity)
+        # inventory에 해당하는 product 찾기
+        prod_name = str(Barcode.objects.get(barcode_id=출고.barcode).fruit)
+        print(prod_name)
+        aggregated_quantities[prod_name] = aggregated_quantities[prod_name] + 출고.Shipping_quantity
+
+    quantity_list = [aggregated_quantities['사과'], aggregated_quantities['배']]
+    print(quantity_list)
 
     #form 진행
     form = ShippingForm(user_id, request.POST or None)
@@ -287,21 +301,19 @@ def shipping(request):
             shipping = form.save(commit=False)
             shipping.user_id = user_id
             shipping.save()
+            minus_inventory(shipping)
             return redirect('shipping')
     else:
         form = ShippingForm(user_id)
 
-    shippings = Shipping.objects.filter(user_id=user_id)
 
     context = {
-        'form': form,
-        'warehouses': user_warehouses,
-        'labels_json': labels_json,
-        'quantities_json': quantities_json,
-        'current_month': current_month,
+        'warehouses': warehouses,
+        'quantity_list': quantity_list,
         'shippings': shippings,
-        'shippingments': shippingments,
-        'barcode':barcode
+        'form': form,
+        'barcode': barcode,
+        'barcode_info': barcode_info,
     }
 
     return render(request, 'shipping/shipping.html', context)

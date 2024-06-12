@@ -10,7 +10,7 @@ class Warehouse(models.Model):
     warehouse_longitude = models.CharField(max_length=100)
     warehouse_latitude = models.CharField(max_length=100)
     warehouse_address = models.CharField(max_length=200)
-    warehouse_capacity = models.IntegerField(default=0)
+    warehouse_capacity = models.DecimalField(default=0.00, decimal_places=2, max_digits=5)
     # user_id는 users앱의 userDB 모델로 부터 받기
     user = models.ForeignKey(user_models.UserDB, on_delete=models.CASCADE)
 
