@@ -39,13 +39,13 @@ class Origin(models.Model):
 
 
 class Barcode(models.Model):
-    barcode_id = models.IntegerField(primary_key=True)
+    barcode_id = models.CharField(primary_key=True, max_length=50)
     origin = models.ForeignKey(Origin, on_delete=models.CASCADE)
     fruit = models.ForeignKey(Fruit, on_delete=models.CASCADE)
     user = models.ForeignKey(user_models.UserDB, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.barcode_id)
+        return self.barcode_id
 
 
 class Warehousing(models.Model):

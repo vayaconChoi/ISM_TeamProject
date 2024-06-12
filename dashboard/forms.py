@@ -130,6 +130,38 @@ class ShippingForm(forms.ModelForm):
             warehousing.save()
         return warehousing
 
+class ShippingForm(forms.ModelForm):
+    def __init__(self, user_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user_id = user_id
+        self.fields['warehouse'].queryset = Warehouse.objects.filter(user_id=user_id)
+    class Meta:
+        model = Shipping
+        fields = ['Shipping_price','Shipping_quantity','Shipping_time',"warehouse",'barcode']
+        widgets = {
+            'Shipping_time': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': "datetime-local",
+                }
+
+            ),'Shipping_quantity': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),'Shipping_price': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),'barcode': forms.Select(
+                 attrs={
+                    'class':"form-control",
+                    'placeholder':"바코드를 스캔하거나 직접 입력하세요.",
+                     'autocomplete': 'off',
+                }
+            )
+        }
+
 class BarcodeForm(forms.ModelForm):
     class Meta:
         model = Barcode

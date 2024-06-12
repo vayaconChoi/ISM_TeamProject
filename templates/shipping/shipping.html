@@ -19,25 +19,24 @@
                           <div class="card-body">
                             <h3><b>상품 출고하기</b></h3>
                                 <!--if 조회된 상품이 없음-->
-                                <form method="post" class="my-3">
+                                <form method="POST" class="my-3">
                                     {% csrf_token %}
                                   <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
                                       <label for="barcodeInput" class="col-form-label"><b>바코드</b></label>
-                                    
                                     </div>
                                     <div class="col-8">
                                       <div class="input-group">
-                                        <input type="text" name="barcode" id="barcodeInput" class="form-control " placeholder="바코드를 스캔하거나 직접 입력하세요."/>
-                                        <button type="submit" class="btn btn-primary" onclick="alert('중품 사과, 원산지:청송')">상품조회</button>
-                                    
-                                      </div> 
-                                    </div> 
-                                  </div> 
+                                         {{ form.barcode }}
+{#                                        <input type="text" name="barcode" id="barcodeInput" class="form-control " placeholder="바코드를 스캔하거나 직접 입력하세요."/>#}
+                                        <button type="submit" class="btn btn-primary" onclick="alert({{ barcode_data.fruit.fruit_name}}, {{ barcode_data.origin.origin_location}})">상품조회</button>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </form>
                                 <!--else-->
                                 <div class="row">
-                                  <div class="mb-3"><b>바코드: </b>000000000<br><b>상품명: </b>중품사과</div>
+                                  <div class="mb-3"><b>바코드: </b>{{ barcode.barcode_id }}<br><b>상품명: </b>{{ barcode.fruit.fruit_name }}</div>
                                   <div class="col-auto mb-3">
                                     <button class="btn btn-outline-primary">상품 수정</button>
                                   </div>
@@ -45,15 +44,6 @@
 
                                 <form method="POST" class="py-1">
                                     {% csrf_token %}
-                                    <div class="row g-3 align-items-center mb-3">
-                                        <div class="col-auto">
-                                            <label for="barcode_name" class="form-label"><b>바코드 입력</b></label>
-                                        </div>
-{#                                        바코드#}
-{#                                        <div class="col-auto">#}
-{#                                            {{ form.barcode }}#}
-{#                                        </div>#}
-                                    </div>
                                     <div class="row g-3 align-items-center mb-3">
                                         <div class="col-auto">
                                             <label for="warehouse_name" class="form-label"><b>창고 이름</b></label>
@@ -161,7 +151,7 @@
           </div>
         </main>
 {% endblock %}
-            
+
 <!-- chart script -->
 {% block chart-script %}{% load static %}
 {#<script src="{% static 'js/inventory_chart/warehouse_pie.js' %}"></script>#}

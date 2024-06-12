@@ -74,7 +74,7 @@
                                 <tbody>
                                     {% for barcode in barcodes %}
                                     <tr>
-                                        <th>{{ barcode.barcode_id }}</th>
+                                        <th>{{ barcode }}</th>
                                         <th>{{ barcode.fruit.fruit_name}}</th>
                                         <th>{{ barcode.origin.origin_location }}</th>
                                         <th><a class="btn btn-outline-primary m-1" href="{% url 'product_edit' barcode.barcode_id %}">Edit</a></th>

@@ -103,22 +103,28 @@ def product_setting(request):
     return render(request, 'product/product_setting.html', context)
 
 def product_edit(request, barcode_id):
+    user_id = request.user.id
     barcode = get_object_or_404(Barcode, barcode_id=barcode_id)
+    barcodes = Barcode.objects.get(barcode_id=barcode_id, user_id=user_id)
 
     if request.method == 'POST':
         form = BarcodeForm(request.POST, instance=barcode)
         if form.is_valid():
-            form.save()
+            barcode = form.save(commit=False)
+            barcode.user_id = user_id
+            barcodes.delete()
+            barcode.save()
             return redirect('product_setting')
     else:
         form = BarcodeForm(instance=barcode)
 
     fruits = Fruit.objects.all()
     origins = Origin.objects.all()
+
     context = {
         'form': form,
         'fruits': fruits,
-        'origins': origins
+        'origins': origins,
     }
     return render(request, 'product/product_edit.html', context)
 
@@ -257,7 +263,7 @@ def shipping(request):
     inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
     aggregated_quantities = defaultdict(int)
     shippingments = Shipping.objects.filter(warehouse__in=user_warehouses).select_related('barcode__fruit')
-    # barcode_id = Shipping.objects.filter()
+    barcode = Barcode.objects.filter(user=user_id)
     for inventory in inventory_data:
         aggregated_quantities[inventory.fruit_id] += inventory.inventory_quantity
 
@@ -286,8 +292,6 @@ def shipping(request):
         form = ShippingForm(user_id)
 
     shippings = Shipping.objects.filter(user_id=user_id)
-    warehouses = Warehouse.objects.filter(user_id=user_id)
-
 
     context = {
         'form': form,
@@ -297,6 +301,7 @@ def shipping(request):
         'current_month': current_month,
         'shippings': shippings,
         'shippingments': shippingments,
+        'barcode':barcode
     }
 
     return render(request, 'shipping/shipping.html', context)
@@ -413,3 +418,4 @@ def recommend(request):
 
 def recommend_detail(request):
     return render(request, "recommend/recommend_detail.html")
+
