@@ -10,7 +10,7 @@ from collections import defaultdict
 import json
 from django.utils.dateparse import parse_datetime
 
-from .api import kamis, gonggong
+from .api import kamis, gonggong,naver,weather
 
 
 def index(request):
@@ -23,7 +23,7 @@ def index(request):
 
     # 경매 데이터 가져오기...
     # real 당일 데이터 (From AT_도매시장종합)
-    auction_data = gonggong.get_live_auction()
+    # auction_data = gonggong.get_live_auction()
     print("경매 데이터 가져오기 성공")
     # print(auction_data) # 다량이라 평시 주석처리
 
@@ -33,7 +33,7 @@ def index(request):
     context = {
         "retail_price": retail_price[1],
         "retail_date": retail_price[0],
-        "auction_data": auction_data,
+        # "auction_data": auction_data,
         "warehouses": user_warehouses,
     }
     return render(request, 'index.html', context)
@@ -425,6 +425,8 @@ def warehouse_delete(request,warehouse_id):
     return render(request, "warehouse/warehouse_delete_confirm.html", context)
 
 def recommend(request):
+    naver.get_naver_api()
+    weather.weather_for_ML(3)
     return render(request, "recommend/recommend_main.html")
 
 

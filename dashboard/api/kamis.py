@@ -11,6 +11,9 @@ def data_for_graph():
     today = today.strftime('%Y-%m-%d')
     ten_day_ago = ten_day_ago.strftime('%Y-%m-%d')
 
+
+
+
     # API KEY 불러오기
     key = os.getenv('KAMIS_KEY')
     print(key)
