@@ -78,13 +78,7 @@
             </div>
             <div class="card-body p-4">
               <!--이용자가 설정할 수 있게 만들기-->
-              <h5 class="fw-bold mb-3">사과 소매 시장가격</h5>
-              <canvas
-                id="myAreaChart"
-                width="757"
-                height="300"
-                class="chartjs-render-monitor"
-                style="display: block; width: 757px; height: 300px"
+              {% include 'component/retail_price.html' with retail_price=retail_price retail_date=retail_date prod_name=inventories.barcode.fruit %}
               ></canvas>
             </div>
             <div class="card-footer small text-muted">
@@ -100,7 +94,7 @@
               보관 창고 위치
             </div>
             <div class="card-body">
-              <h5 class="fw-bold">00창고</h5>
+              <h5 class="fw-bold">{{ inventories.warehouse.warehouse_name }}</h5>
               <!--네이버 지도-->
               <div id="map" style="width: 100%; height: 85%"></div>
             </div>

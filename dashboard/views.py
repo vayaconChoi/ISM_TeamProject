@@ -30,11 +30,13 @@ def index(request):
     user_id = request.user.id
     user_warehouses = Warehouse.objects.filter(user=user_id)
 
+    warehouse_inventory = Inventory.objects.select_related('warehouse').filter(user=user_id)
     context = {
         "retail_price": retail_price[1],
         "retail_date": retail_price[0],
         "auction_data": auction_data,
         "warehouses": user_warehouses,
+        "warehouse_inventory": warehouse_inventory
     }
     return render(request, 'index.html', context)
 
@@ -78,8 +80,19 @@ def inventory(request):
 def inventory_details(request,inventory_id):
     user_id = request.user.id
     inventories = Inventory.objects.get(inventory_id=inventory_id, user=user_id)
+
+    product_name = str(inventories.barcode.fruit) + "상품"
+    print(product_name)
+    # 소매 데이터 가져오기...
+    retail_price = kamis.data_for_graph(product_name)
+    print("소매 데이터 가져오기 성공")
+    print(retail_price)
+
     context = {
         "inventories":inventories,
+        "retail_price": retail_price[1],
+        "retail_date": retail_price[0],
+
     }
     return render(request, 'inventory/inventory_item_detail.html',context)
 
