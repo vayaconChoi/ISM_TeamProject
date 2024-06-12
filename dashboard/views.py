@@ -23,7 +23,7 @@ def index(request):
 
     # 경매 데이터 가져오기...
     # real 당일 데이터 (From AT_도매시장종합)
-    auction_data = gonggong.get_live_auction()
+    # auction_data = gonggong.get_live_auction()
     print("경매 데이터 가져오기 성공")
     # print(auction_data) # 다량이라 평시 주석처리
 
@@ -34,8 +34,8 @@ def index(request):
     context = {
         "retail_price": retail_price[1],
         "retail_date": retail_price[0],
-        "auction_data": auction_data,
-        "warehouses": user_warehouses,
+        #"auction_data": auction_data,
+        "user_warehouses": user_warehouses,
         "warehouse_inventory": warehouse_inventory
     }
     return render(request, 'index.html', context)
@@ -253,6 +253,19 @@ def warehousing_edit(request, warehousing_id):
         form = WarehousingForm(user_id, request.POST, instance=warehousing)
         if form.is_valid():
             form.save()
+            barcode = warehousing.barcode.barcode_id
+            warehouse_id = warehousing.warehouse.warehouse_id
+            inventory = Inventory.objects.get(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            shipping_delta = Shipping.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            warehousing_delta = Warehousing.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+
+            quantity = 0
+            for i in warehousing_delta:
+                quantity += i.warehousing_quantity
+            for i in shipping_delta:
+                quantity -= i.Shipping_quantity
+            inventory.inventory_quantity = quantity
+            inventory.save()
             return redirect('warehousing')
     else:
         form = WarehousingForm(user_id, instance=warehousing, initial={'warehousing_id': warehousing.warehousing_id})
@@ -261,6 +274,7 @@ def warehousing_edit(request, warehousing_id):
     warehouses = Warehouse.objects.filter(user=user_id)
     context = {
         'form': form,
+        'warehousing': warehousing,
         'warehousings': warehousings,
         'warehouses': warehouses
     }
@@ -271,6 +285,19 @@ def warehouseing_delete(request,warehousing_id):
     warehousings = Warehousing.objects.get(warehousing_id=warehousing_id, user=user)
     if request.method == 'POST':
         warehousings.delete()
+        barcode = warehousings.barcode.barcode_id
+        warehouse_id = warehousings.warehouse.warehouse_id
+        inventory = Inventory.objects.get(user_id=user, barcode=barcode, warehouse_id=warehouse_id)
+        shipping_delta = Shipping.objects.filter(user_id=user, barcode=barcode, warehouse_id=warehouse_id)
+        warehousing_delta = Warehousing.objects.filter(user_id=user, barcode=barcode, warehouse_id=warehouse_id)
+
+        quantity = 0
+        for i in warehousing_delta:
+            quantity += i.warehousing_quantity
+        for i in shipping_delta:
+            quantity -= i.Shipping_quantity
+        inventory.inventory_quantity = quantity
+        inventory.save()
         return redirect('warehousing')
     return render(request,"warehousing/warehousing_delete_confirm.html",{'warehousings':warehousings,'user':user})
 
@@ -344,6 +371,19 @@ def shipping_edit(request,shipping_id):
         form = ShippingForm(user_id, request.POST, instance=shipping)
         if form.is_valid():
             form.save()
+            barcode = shipping.barcode.barcode_id
+            warehouse_id = shipping.warehouse.warehouse_id
+            inventory = Inventory.objects.get(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            shipping_delta = Shipping.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+            warehousing_delta = Warehousing.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+
+            quantity = 0
+            for i in warehousing_delta:
+                quantity += i.warehousing_quantity
+            for i in shipping_delta:
+                quantity -= i.Shipping_quantity
+            inventory.inventory_quantity = quantity
+            inventory.save()
             return redirect('shipping')
     else:
         form = ShippingForm(user_id, instance=shipping, initial={'shipping_id': shipping.shipping_id})
@@ -353,7 +393,8 @@ def shipping_edit(request,shipping_id):
     context = {
         'form': form,
         'shippings': shippings,
-        'warehouses': warehouses
+        'warehouses': warehouses,
+        'shipping':shipping
     }
     return render(request, 'shipping/shipping_edit.html', context)
 
@@ -362,6 +403,19 @@ def shipping_delete(request,shipping_id):
     shippings = Shipping.objects.get(shipping_id=shipping_id, user_id=user_id)
     if request.method == 'POST':
         shippings.delete()
+        barcode = shippings.barcode.barcode_id
+        warehouse_id = shippings.warehouse.warehouse_id
+        inventory = Inventory.objects.get(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+        shipping_delta = Shipping.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+        warehousing_delta = Warehousing.objects.filter(user_id=user_id, barcode=barcode, warehouse_id=warehouse_id)
+
+        quantity = 0
+        for i in warehousing_delta:
+            quantity += i.warehousing_quantity
+        for i in shipping_delta:
+            quantity -= i.Shipping_quantity
+        inventory.inventory_quantity = quantity
+        inventory.save()
         return redirect('shipping')
     return render(request,"shipping/shipping_delete_confirm.html",{'shippings':shippings,'user':user_id})
 
@@ -393,9 +447,22 @@ def warehouse(request):
 def warehouse_detail(request,warehouse_id):
     warehouses = Warehouse.objects.get(warehouse_id=warehouse_id)
     warehousings = Warehousing.objects.filter(user_id = request.user.id,warehouse_id = warehouse_id)
+    inventories = Inventory.objects.select_related('barcode').filter(warehouse_id=warehouse_id)
+
+    # 재고량 PieChart 데이터
+    quantity_list = [0, 0]
+    for i in inventories:
+        print(i.inventory_quantity)
+        if str(i.barcode.fruit) == '사과':
+            quantity_list[0] += i.inventory_quantity
+        else:
+            quantity_list[1] += i.inventory_quantity
+
+
     context = {
         'warehouse': warehouses,
-        'warehousings' : warehousings
+        'warehousings' : warehousings,
+        'quantity_list' : quantity_list
     }
     return render(request, "warehouse/warehouse_detail.html", context)
 

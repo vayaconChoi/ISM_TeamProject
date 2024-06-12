@@ -13,7 +13,6 @@ def data_for_graph(fruit_type="사과상품"):
 
     # API KEY 불러오기
     key = os.getenv('KAMIS_KEY')
-    print(key)
     id = "4465"
     product = {
         "사과상품":['400', '411',"04"],

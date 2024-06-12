@@ -1,0 +1,37 @@
+<!--네이버 지도-->
+<div id="map" style="width: 100%; height: 400px"></div>
+
+{% block map-script %}
+<script>
+  var mapOptions = {
+    center: new naver.maps.LatLng({{ inventories.warehouse.warehouse_latitude }}, {{ inventories.warehouse.warehouse_longitude }}),
+    zoom: 10,
+  };
+
+  var map = new naver.maps.Map("map", mapOptions);
+
+  var marker = new naver.maps.Marker({
+    position: new naver.maps.LatLng({{ inventories.warehouse.warehouse_latitude }}, {{ inventories.warehouse.warehouse_longitude }}),
+    map: map,
+  });
+
+  var contentString = [
+    '<div class="p-2">',
+    "<h3>{{ inventories.warehouse.warehouse_name }}</h3>",
+    "<p>{{ inventories.warehouse.warehouse_address }}<br/>용량: {{ inventories.warehouse.warehouse_capacity }}CBM</p>",
+    "</div>",
+  ].join("");
+
+  var infowindow = new naver.maps.InfoWindow({
+    content: contentString,
+  });
+
+  naver.maps.Event.addListener(marker, "click", function (e) {
+    if (infowindow.getMap()) {
+      infowindow.close();
+    } else {
+      infowindow.open(map, marker);
+    }
+  });
+</script>
+{% endblock %}
