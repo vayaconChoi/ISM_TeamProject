@@ -13,8 +13,8 @@ class MLModel(models.Model):
 class Warehouse(models.Model):
     warehouse_id = models.BigAutoField(primary_key=True)
     warehouse_name = models.CharField(max_length=100)
-    warehouse_longitude = models.CharField(max_length=100)
     warehouse_latitude = models.CharField(max_length=100)
+    warehouse_longitude = models.CharField(max_length=100)
     warehouse_address = models.CharField(max_length=200)
     warehouse_capacity = models.DecimalField(default=0.00, decimal_places=2, max_digits=5)
     # user_id는 users앱의 userDB 모델로 부터 받기
@@ -37,8 +37,9 @@ class Origin(models.Model):
     origin_id = models.BigAutoField(primary_key=True)
     origin_location = models.CharField(max_length=200)
     origin_address = models.CharField(max_length=200)
-    origin_longitude = models.CharField(max_length=200)
     origin_latitude = models.CharField(max_length=200)
+    origin_longitude = models.CharField(max_length=200)
+
 
     def __str__(self):
         return self.origin_location

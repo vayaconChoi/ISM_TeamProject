@@ -11,8 +11,27 @@ class FruitForm(forms.ModelForm):
 class OriginForm(forms.ModelForm):
     class Meta:
         model = Origin
-        fields = '__all__'
+        fields = ['origin_location', 'origin_address', 'origin_latitude',
+                  'origin_longitude']
+        widgets = {
+            'origin_address': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'id': "sample5_address",
+                    'placeholder': "주소",
+                    'autocomplete': 'off',
+                    'readonly': 'true'
+                },
 
+            ), 'origin_location': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'autocomplete': 'off',
+                }
+            ), 'origin_latitude': forms.HiddenInput(),
+            'origin_longitude': forms.HiddenInput(),
+
+        }
 
 class InventoryForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block main-content %}
+<main>
+    <!--Dash Title-->
+    <div class="container-fluid">
+        <div class="px-3 py-4">
+            <p><a href="/origin" style="text-decoration-line: none">Origin</a> / <a href="#"
+                    style="text-decoration-line: none">Detail</a> </p>
+            <h1 class="fw-bold">{{ origins.origin_location }} 생산지 정보 수정</h1>
+            <hr />
+        </div>
+        <div class="p-5 pt-5 bg-light">
+            <div class="col-xl-7 col-md-12 mb-4">
+                    <div class="card shadow" style="height: 100%;">
+                        <div class="card-body">
+                            <h3><b>생산지 수정</b></h3>
+                            <form method="post" class="py-1">
+                                {% csrf_token %}
+                                <h5><b>주소</b></h5>
+                                <!--주소 입력 받는건 https://developers.kakao.com/docs/latest/ko/local/dev-guide-->
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-8">
+                                        {{ form.origin_address }}
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="button" onclick="sample5_execDaumPostcode()" value="주소 검색" class="btn btn-outline-primary"><br>
+                                    </div>
+                                </div>
+                                <h5><b>생산지 정보</b></h5>
+                                <div class="row g-3 align-items-center mb-3">
+                                    <div class="col-auto">
+                                        <label for="origin_location" class="form-label"><b>생산지 이름</b></label>
+                                    </div>
+                                    <div class="col-auto">
+                                        {{ form.origin_location }}
+                                    </div>
+                                </div>
+                                <input type="hidden" id="origin_latitude" name="origin_latitude">
+                                <input type="hidden" id="origin_longitude" name="origin_longitude">
+                                <div class="d-flex flex-row-reverse">
+                                    <button type="submit" class="btn btn-success">확인</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block map-script %}
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+{# JS key#}
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c54c16826dbfd9c1ff4c0a53176f989&libraries=services"></script>
+    <script>
+        function openDaumPostcode() {
+            new daum.Postcode({ oncomplete: function(data) { var address = data.address;
+            document.getElementById("sample5_address").value = address;
+            document.getElementById("id_origin_address").value = address;
+            var geocoder = new kakao.maps.services.Geocoder();
+            geocoder.addressSearch(data.address, function(result, status) { if (status === kakao.maps.services.Status.OK)
+            { var latitude = result[0].y; var longitude = result[0].x;
+                document.getElementById("origin_latitude").value = latitude;
+                document.getElementById("origin_longitude").value = longitude; } }); } }).open(); }
+        document.getElementById("address-search-btn").addEventListener("click", function(event) { event.preventDefault();
+            openDaumPostcode();
+        });
+        document.querySelector("form").addEventListener("submit", function(event) { if (document.getElementById("id_origin_address").value === "") { alert("주소를 선택해 주세요.");
+            event.preventDefault();
+        } }); </script>
+{% endblock %}

@@ -515,9 +515,51 @@ def warehouse_delete(request,warehouse_id):
     }
     return render(request, "warehouse/warehouse_delete_confirm.html", context)
 
-def recommend(request):
-    return render(request, "recommend/recommend_main.html")
 
+
+def origin_setting(request):
+    form = OriginForm(request.POST or None)
+    origins = Origin.objects.all()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('origin_setting')
+    return render(request, 'origin/origin_setting.html', {'form':form,'origins':origins})
+
+def origin_delete(request,origin_id):
+    origins = Origin.objects.get(origin_id=origin_id)
+    if request.method == 'POST':
+        origins.delete()
+        return redirect('origin_setting')
+    return render(request, "origin/origin_delete_confirm.html", {'origins': origins})
+
+# dashboard/views.py
+
+def origin_edit(request, origin_id):
+    try:
+        origin = Origin.objects.get(origin_id=origin_id)
+    except Origin.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'POST':
+        form = OriginForm(request.POST, instance=origin)
+        if form.is_valid():
+            origins = form.save(commit=False)
+            origins.origin_latitude = request.POST.get('origin_latitude')
+            origins.origin_longitude = request.POST.get('origin_longitude')
+            origins.save()
+            return redirect("origin_setting")
+    else:
+        form = OriginForm(instance=origin, initial={'origin_id': origin_id})
+    origins = Origin.objects.get(origin_id = origin_id)
+    context = {
+        'form': form,
+        'origins': origins,
+    }
+    return render(request, 'origin/origin_edit.html', context)
+
+def recommend(request):
+    return render(request, "recommend.html")
 
 def recommend_detail(request):
     return render(request, "recommend/recommend_detail.html")
