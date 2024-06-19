@@ -48,8 +48,11 @@ def inventory(request):
     user_warehouses = Warehouse.objects.filter(user_id=user_id)
     inventory_data = Inventory.objects.filter(warehouse__in=user_warehouses)
     aggregated_quantities = {
-        '사과':0,
-        '배':0
+        '사과상품': 0,
+        '사과중품': 0,
+        '배상품': 0,
+        '배중품': 0,
+
     }
 
 
@@ -60,11 +63,11 @@ def inventory(request):
         print(prod_name)
         aggregated_quantities[prod_name] += inventory.inventory_quantity
 
-    quantities = [aggregated_quantities["사과"], aggregated_quantities["배"]]
-    print(quantities)
+    quantity_list = [aggregated_quantities['사과상품'],aggregated_quantities['사과중품'], aggregated_quantities['배상품'],aggregated_quantities['배중품']]
+    print(quantity_list)
 
     # JSON 형식으로 변형
-    quantities_json = json.dumps(quantities)
+    quantities_json = json.dumps(quantity_list)
 
     warehouse_inventory = Inventory.objects.select_related('warehouse').filter(user=user_id)
     print(warehouse_inventory)
@@ -83,7 +86,7 @@ def inventory_details(request,inventory_id):
     user_id = request.user.id
     inventories = Inventory.objects.get(inventory_id=inventory_id, user=user_id)
 
-    product_name = str(inventories.barcode.fruit) + "상품"
+    product_name = str(inventories.barcode.fruit)
     print(product_name)
     # 소매 데이터 가져오기...
     retail_price = kamis.data_for_graph(product_name)
@@ -169,8 +172,11 @@ def warehousing(request):
 
     # 파이차트를 위한 데이터 끌어 모으기
     aggregated_quantities = {
-        '사과': 0,
-        '배': 0
+        '사과상품': 0,
+        '사과중품': 0,
+        '배상품': 0,
+        '배중품': 0,
+
     }
     for 입고 in warehousings:
         print(입고.barcode)
@@ -181,7 +187,7 @@ def warehousing(request):
         aggregated_quantities[prod_name] = aggregated_quantities[prod_name] + 입고.warehousing_quantity
 
 
-    quantity_list = [aggregated_quantities['사과'], aggregated_quantities['배']]
+    quantity_list = [aggregated_quantities['사과상품'],aggregated_quantities['사과중품'], aggregated_quantities['배상품'],aggregated_quantities['배중품']]
     print(quantity_list)
 
     # form 진행
@@ -320,8 +326,11 @@ def shipping(request):
 
     # 파이차트를 위한 데이터 끌어 모으기
     aggregated_quantities = {
-        '사과': 0,
-        '배': 0
+        '사과상품': 0,
+        '사과중품': 0,
+        '배상품': 0,
+        '배중품': 0,
+
     }
 
     for 출고 in shippings:
@@ -332,7 +341,7 @@ def shipping(request):
         print(prod_name)
         aggregated_quantities[prod_name] = aggregated_quantities[prod_name] + 출고.Shipping_quantity
 
-    quantity_list = [aggregated_quantities['사과'], aggregated_quantities['배']]
+    quantity_list = [aggregated_quantities['사과상품'],aggregated_quantities['사과중품'], aggregated_quantities['배상품'],aggregated_quantities['배중품']]
     print(quantity_list)
 
     #form 진행

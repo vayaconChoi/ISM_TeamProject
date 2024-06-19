@@ -68,14 +68,14 @@
 <!-- chart script -->
 {% block chart-script %} {% load static %}
 <!-- 재고변화 그래프 -->
-{# 이걸 하려면 어느 시점의 데이터를 저장해둬야함 -> data warehouse 아 시발 #}
 <script src="{% static 'js/inventory_chart/selling_chart.js' %}"></script>
 <!-- 재고 현황 pie chart -->
 <script>
-  var xValues = ['사과','배'];
-  var yValues = {{ quantities_json| safe }};
-  var barColors = ["red", "yellow", "blue", "green"];
-  var text = "전체 상품현황";
+  // Python-generated data
+  var xValues = ['상품사과','중품사과','상품배','중품배'];
+  var yValues = {{ quantities_json|safe }};
+  var barColors = ["#FEE7A0","#0067A3",'#2DB400','#FEFD48'];
+  var text = "상품현황";
 
   // Pie Chart
   var ctx = document.getElementById("WarehousePie").getContext('2d');

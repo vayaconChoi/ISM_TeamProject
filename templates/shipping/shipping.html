@@ -195,9 +195,9 @@
 {% block chart-script %}{% load static %}
 <script>
   // Python-generated data
-  var xValues = ['사과','배'];
+  var xValues = ['상품사과','중품사과','상품배','중품배'];
   var yValues = {{ quantity_list|safe }};
-  var barColors = ["red", "#FEE7A0"];
+  var barColors = ["#FEE7A0","#0067A3",'#2DB400','#FEFD48'];
   var text = "상품현황";
 
   // Pie Chart
