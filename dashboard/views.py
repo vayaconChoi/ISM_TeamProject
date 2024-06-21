@@ -550,7 +550,7 @@ def origin_edit(request, origin_id):
             origins.save()
             return redirect("origin_setting")
     else:
-        form = OriginForm(instance=origin, initial={'origin_id': origin_id})
+        form = OriginForm(instance=origin)
     origins = Origin.objects.get(origin_id = origin_id)
     context = {
         'form': form,

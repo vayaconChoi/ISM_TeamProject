@@ -4,7 +4,7 @@
           <div class="container-fluid">
             <!--Dash Title-->
             <div class="px-3 py-4">
-              <p style="color: blue">Product</p>
+              <p style="color: blue">Origin</p>
               <h1 class="fw-bold">Origin Setting (생산지 등록)</h1>
               <hr />
               <p>생산지 정보를 입력하세요</p>
@@ -18,15 +18,6 @@
                       <form method="POST" class="py-1">
                           {% csrf_token %}
                           <div class="row g-3 align-items-center mb-3">
-                              <div class="row g-3 align-items-center mb-3">
-                                  <div class="col-auto">
-                                      <label for="origin_location" class="form-label"><b>생산지</b></label>
-                                  </div>
-                                  <div class="col-auto">
-                                      {{ form.origin_location }}
-                                  </div>
-                              </div>
-                              <div class="row g-3 align-items-center mb-3">
                                     <div class="col-8">
                                         {{ form.origin_address }}
                                     </div>
@@ -35,6 +26,17 @@
                                     </div>
                                 </div>
                               <div class="d-flex flex-row-reverse">
+                          <div class="row g-3 align-items-center mb-3">
+                              <div class="row g-3 align-items-center mb-3">
+                                  <div class="col-auto">
+                                      <label for="origin_location" class="form-label"><b>생산지</b></label>
+                                  </div>
+                                  <div class="col-auto">
+                                      {{ form.origin_location }}
+                                  </div>
+                              </div>
+                              <input type="hidden" id="origin_latitude" name="origin_latitude">
+                              <input type="hidden" id="origin_longitude" name="origin_longitude">
                                   <button type="submit" class="btn btn-success">등록</button>
                               </div>
                           </div>
@@ -101,8 +103,8 @@
                         var lng = result[0].x;
 
                         // 위도 경도 값을 hidden input에 넣는다.
-                        document.getElementById("warehouse_latitude").value = lat;
-                        document.getElementById("warehouse_longitude").value = lng;
+                        document.getElementById("origin_latitude").value = lat;
+                        document.getElementById("origin_longitude").value = lng;
                     }
                 });
             }
