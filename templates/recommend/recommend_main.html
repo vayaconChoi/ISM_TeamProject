@@ -1,67 +1,135 @@
 {% extends 'base.html' %}
 {% block main-content %}
-        <main>
-          <!--Dash Title-->
-          <div class="container-fluid">
-            <div class="px-3 py-4">
-                <p><a href="/recommend" style="text-decoration-line: none">Recommendation</a></p>
-                <h1 class="fw-bold">매입 추천 작물을 알려드립니다</h1>
-              <hr />
-            </div> 
+<main>
+    <!--Dash Title-->
+    <div class="container-fluid">
+        <div class="px-3 py-4">
+            <p><a href="/recommend" style="text-decoration-line: none">Recommendation</a></p>
+            <h1 class="fw-bold">매입 추천 작물을 알려드립니다</h1>
+            <hr />
+        </div>
 
-            <div class="p-5 pt-5 bg-light">
-                <div class="row">
-                  <div class="col-12 mb-4">
+        <div class="p-5 pt-5 bg-light">
+            <div class="row">
+                <div class="col-12 mb-4">
                     <div class="card shadow" style="height: 100%;">
-                      <div class="card-body">
-                        <div class="container d-flex flex-column align-items-center py-5">
-                          <h1 class="mb-3 fw-bold">실시간 매입 추천 작물 확인하러 가기</h1>
-                          <div class="col-auto my-4">
-                            <a href="" class="btn btn-success col-auto py-3 px-5" style="font-size: 50px;">추천 받기</a>
-                              {{ prediction_apple_high_10 }}
-                          </div>
-                        </div>                        
-                      </div>
+                        <div class="card-body">
+                            <div class="container d-flex flex-column align-items-center py-5">
+                                <h1 class="mb-3 fw-bold">실시간 매입 추천 작물 확인하러 가기</h1>
+                                <div class="col-auto my-4">
+                                    {% if not button_clicked %}
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success col-auto py-3 px-5"
+                                            style="font-size: 50px;">추천 받기</button>
+                                    </form>
+                                    {% else %}
+                                    <div style="display: flex; justify-content: space-between; margin: 0 10px">
+                                        <table class="table" style="margin: 0 10px">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>배 상품</th>
+                                                    <th>배 중품</th>
+                                                    <th>사과 상품</th>
+                                                    <th>사과 중품</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>10일 후 예측가격</td>
+                                                    <td>{{ pear_high_10 }}</td>
+                                                    <td>{{ pear_mid_10 }}</td>
+                                                    <td>{{ apple_high_10 }}</td>
+                                                    <td>{{ apple_mid_10 }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>20일 후 예측가격</td>
+                                                    <td>{{ pear_high_20 }}</td>
+                                                    <td>{{ pear_mid_20 }}</td>
+                                                    <td>{{ apple_high_20 }}</td>
+                                                    <td>{{ apple_mid_20 }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>30일 후 예측가격</td>
+                                                    <td>{{ pear_high_30 }}</td>
+                                                    <td>{{ pear_mid_30 }}</td>
+                                                    <td>{{ apple_high_30 }}</td>
+                                                    <td>{{ apple_mid_30 }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <table class="table" style="margin: 0 0 0 10px">
+                                            <thead>
+                                                <tr>
+                                                    <th>항목</th>
+                                                    <th>사과</th>
+                                                    <th>배</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>가장 가까운 종류</td>
+                                                    <td>{{ nearest_apple }}</td>
+                                                    <td>{{ nearest_pear }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>가장 가까운 산지와의 거리</td>
+                                                    <td>{{ nearest_apple_distance }}</td>
+                                                    <td>{{ nearest_pear_distance }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>가장 가까운 산지</td>
+                                                    <td>{{ nearest_apple_origin }}</td>
+                                                    <td>{{ nearest_pear_origin }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="col-12 mb-4">
-                    <div class="card shadow">
-                      <div class="card-header">
-                        <i class="fas fa-chart-area me-1"></i>
-                        과거 예측 결과
-                      </div>
-                      <div class="card-body">
-                        <table class="table">
-                          <thead>
-                            <tr>
-                              <th>예측 요청일자</th>
-                              <th>추천 작물</th>
-                              <th>원산지</th>
-                              <th>추천 입고 창고</th>
-                              <th>추천 매입가격</th>
-                              <th>예측 최대 판매가격</th>
-                              <th>자세히 보기</th>
-                              <th>기록 삭제</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>2024-05-29</td>
-                              <td>중품 사과</td>
-                              <td>충주</td>
-                              <td>대전창고</td>
-                              <td>20000원</td>
-                              <td>32000원</td>
-                              <th><a href="/recommend/detail/1" class="btn btn-outline-primary">Detail</a></th>
-                              <td><a href="" class="btn btn-outline-danger">Delete</a></td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
                 </div>
+                {# <div class="col-12 mb-4">#}
+                    {# <div class="card shadow">#}
+                        {# <div class="card-header">#}
+                            {# <i class="fas fa-chart-area me-1"></i>#}
+                            {# 과거 예측 결과#}
+                            {# </div>#}
+                        {# <div class="card-body">#}
+                            {# <table class="table">#}
+                                {# <thead>#}
+                                    {# <tr>#}
+                                        {# <th>예측 요청일자</th>#}
+                                        {# <th>추천 작물</th>#}
+                                        {# <th>원산지</th>#}
+                                        {# <th>추천 입고 창고</th>#}
+                                        {# <th>추천 매입가격</th>#}
+                                        {# <th>예측 최대 판매가격</th>#}
+                                        {# <th>자세히 보기</th>#}
+                                        {# <th>기록 삭제</th>#}
+                                        {# </tr>#}
+                                    {# </thead>#}
+                                {# <tbody>#}
+                                    {# <tr>#}
+                                        {# <td>2024-05-29</td>#}
+                                        {# <td>중품 사과</td>#}
+                                        {# <td>충주</td>#}
+                                        {# <td>대전창고</td>#}
+                                        {# <td>20000원</td>#}
+                                        {# <td>32000원</td>#}
+                                        {# <th><a href="/recommend/detail/1" class="btn btn-outline-primary">Detail</a></th>#}
+                                        {# <td><a href="" class="btn btn-outline-danger">Delete</a></td>#}
+                                        {# </tr>#}
+                                    {# </tbody>#}
+                                {# </table>#}
+                            {# </div>#}
+                        {# </div>#}
+                    {# </div>#}
             </div>
-
-        </main>
+        </div>
+    </div>
+</main>
 {% endblock %}

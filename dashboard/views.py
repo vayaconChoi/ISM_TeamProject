@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
-from .models import Fruit,Origin,Inventory,Warehousing,Shipping,Warehouse, Barcode, MLModel
+from dashboard.models import Fruit,Origin,Inventory,Warehousing,Shipping,Warehouse, Barcode, MLModel
 from .forms import FruitForm,OriginForm,InventoryForm,WarehousingForm,ShippingForm,WarehouseForm, BarcodeForm
 from datetime import datetime,timedelta
 from users import models as user_models
@@ -11,8 +11,9 @@ import pandas as pd
 from django.shortcuts import render
 import joblib
 from sklearn.preprocessing import StandardScaler
+from haversine import haversine
 
-from .api import kamis, gonggong
+from .api import kamis, gonggong, naver, weather
 
 
 def index(request):
@@ -54,7 +55,6 @@ def inventory(request):
         '배중품': 0,
 
     }
-
 
     for inventory in inventory_data:
         # inventory에 있는 바코드로 해당 product 찾기
@@ -166,7 +166,7 @@ def warehousing(request):
     # 초반 form에서 받아오는 바코드임
     barcode = request.POST.get('barcode')
     # 이 바코드 가지고, 원산지와 상품명을 받아와야 함
-    barcode_info ={}
+    barcode_info = {}
     if barcode:
         barcode_info = Barcode.objects.get(barcode_id=barcode)
 
@@ -558,8 +558,165 @@ def origin_edit(request, origin_id):
     }
     return render(request, 'origin/origin_edit.html', context)
 
+
 def recommend(request):
-    return render(request, "recommend.html")
+    try:
+        # 디버깅 시작
+        print("Starting recommend view")
+
+        # 데이터 로드
+        naver_df = naver.get_naver_api()
+        weather_df = weather.weather_for_ML(90)
+        print("Data loaded successfully")
+
+        # 버튼 클릭 후에 결과가 보이도록
+        button_clicked = False
+
+        if request.method == "POST":
+            button_clicked = True
+
+        # 스케일러 로드
+        scaler_instance = MLModel.objects.get(name="SScaler")
+        scaler = joblib.load(scaler_instance.model_file.path)
+        print("Scaler loaded successfully")
+
+        # 데이터 프레임 병합 및 스케일링
+        combined_df = pd.concat([weather_df, naver_df], axis=1).fillna(0)
+        combined_df.reset_index(drop=True, inplace=True)
+        scaled_data = scaler.transform(combined_df)
+        scaled_df = pd.DataFrame(scaled_data, columns=combined_df.columns)
+        print("Data merged and scaled successfully")
+
+        # 최근 데이터 추출
+        recent_30_days = scaled_df.head(30).reset_index(drop=True)
+        recent_60_days = scaled_df.head(60).reset_index(drop=True)
+        recent_90_days = scaled_df.head(90).reset_index(drop=True)
+
+        # 모델 로드
+        pear_high = MLModel.objects.get(name="pear_high")
+        pear_mid = MLModel.objects.get(name="pear_mid")
+        apple_high = MLModel.objects.get(name="apple_high")
+        apple_mid = MLModel.objects.get(name="apple_mid")
+
+        pear_high_model = joblib.load(pear_high.model_file.path)
+        pear_mid_model = joblib.load(pear_mid.model_file.path)
+        apple_high_model = joblib.load(apple_high.model_file.path)
+        apple_mid_model = joblib.load(apple_mid.model_file.path)
+        print("Models loaded successfully")
+
+        # 예측
+        prediction_pear_high_10 = int(pear_high_model.predict(recent_30_days)[-1])
+        prediction_pear_high_20 = int(pear_high_model.predict(recent_60_days)[-1])
+        prediction_pear_high_30 = int(pear_high_model.predict(recent_90_days)[-1])
+        prediction_pear_mid_10 = int(pear_mid_model.predict(recent_30_days)[-1])
+        prediction_pear_mid_20 = int(pear_mid_model.predict(recent_60_days)[-1])
+        prediction_pear_mid_30 = int(pear_mid_model.predict(recent_90_days)[-1])
+        prediction_apple_high_10 = int(apple_high_model.predict(recent_30_days)[-1])
+        prediction_apple_high_20 = int(apple_high_model.predict(recent_60_days)[-1])
+        prediction_apple_high_30 = int(apple_high_model.predict(recent_90_days)[-1])
+        prediction_apple_mid_10 = int(apple_mid_model.predict(recent_30_days)[-1])
+        prediction_apple_mid_20 = int(apple_mid_model.predict(recent_60_days)[-1])
+        prediction_apple_mid_30 = int(apple_mid_model.predict(recent_90_days)[-1])
+        print("Predictions made successfully")
+
+        # 거리 계산
+        user_id = request.user.id
+        dist = {}
+        barcodes = Barcode.objects.all()
+        warehouses = Warehouse.objects.all()
+
+        for barcode in barcodes:
+            for warehouse in warehouses:
+                try:
+                    origin_latitude = float(barcode.origin.origin_latitude)
+                    origin_longitude = float(barcode.origin.origin_longitude)
+                    warehouse_latitude = float(warehouse.warehouse_latitude)
+                    warehouse_longitude = float(warehouse.warehouse_longitude)
+
+                    distance = calculate_distance(
+                        origin_latitude,
+                        origin_longitude,
+                        warehouse_latitude,
+                        warehouse_longitude
+                    )
+
+                    if barcode.fruit.fruit_name in ['사과상품', '사과중품']:
+                        coordinate_apple = (
+                            barcode.fruit.fruit_name,
+                            barcode.origin.origin_location,
+                            warehouse.warehouse_name
+                        )
+                        dist[coordinate_apple] = distance
+                    else:
+                        coordinate_pear = (
+                            barcode.fruit.fruit_name,
+                            barcode.origin.origin_location,
+                            warehouse.warehouse_name
+                        )
+                        dist[coordinate_pear] = distance
+                except ValueError:
+                    continue
+
+        nearest_apple, nearest_apple_distance, nearest_apple_origin, nearest_pear, nearest_pear_distance, nearest_pear_origin = find_nearest_warehouses(dist)
+        print("Distance calculations done successfully")
+
+        # 컨텍스트 생성
+        context = {
+            'button_clicked': button_clicked,
+            'pear_high_10': prediction_pear_high_10,
+            'pear_high_20': prediction_pear_high_20,
+            'pear_high_30': prediction_pear_high_30,
+            'pear_mid_10': prediction_pear_mid_10,
+            'pear_mid_20': prediction_pear_mid_20,
+            'pear_mid_30': prediction_pear_mid_30,
+            'apple_high_10': prediction_apple_high_10,
+            'apple_high_20': prediction_apple_high_20,
+            'apple_high_30': prediction_apple_high_30,
+            'apple_mid_10': prediction_apple_mid_10,
+            'apple_mid_20': prediction_apple_mid_20,
+            'apple_mid_30': prediction_apple_mid_30,
+            'nearest_apple': nearest_apple,
+            'nearest_apple_distance': nearest_apple_distance,
+            'nearest_apple_origin': nearest_apple_origin,
+            'nearest_pear_distance': nearest_pear_distance,
+            'nearest_pear_origin': nearest_pear_origin,
+            'nearest_pear': nearest_pear,
+        }
+        print("Context prepared successfully")
+
+        return render(request, "recommend/recommend_main.html", context)
+    except Exception as e:
+        print(f"Error: {e}")
+        return render(request, "recommend/recommend_main.html", {'error': str(e)})
+
+def calculate_distance(origin_latitude, origin_longitude, warehouse_latitude, warehouse_longitude):
+    origin_coordinate = (origin_latitude, origin_longitude)
+    warehouse_coordinate = (warehouse_latitude, warehouse_longitude)
+    distance = haversine(origin_coordinate, warehouse_coordinate, unit='km')
+    return distance
+
+
+def find_nearest_warehouses(dist):
+    nearest_apple = None
+    nearest_apple_distance = float('inf')
+    nearest_apple_origin = None
+    nearest_pear = None
+    nearest_pear_distance = float('inf')
+    nearest_pear_origin = None
+
+    for coordinate, distance in dist.items():
+        if coordinate[0] in ['사과상품', '사과중품']:
+            if distance < nearest_apple_distance:
+                nearest_apple = coordinate[0]
+                nearest_apple_distance = distance
+                nearest_apple_origin = coordinate[1]
+        else:
+            if distance < nearest_pear_distance:
+                nearest_pear = coordinate[0]
+                nearest_pear_distance = distance
+                nearest_pear_origin = coordinate[1]
+
+    return nearest_apple, nearest_apple_distance, nearest_apple_origin, nearest_pear, nearest_pear_distance, nearest_pear_origin
 
 def recommend_detail(request):
     return render(request, "recommend/recommend_detail.html")
