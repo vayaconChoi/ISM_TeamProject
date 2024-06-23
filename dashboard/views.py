@@ -461,13 +461,17 @@ def warehouse_detail(request,warehouse_id):
     inventories = Inventory.objects.select_related('barcode').filter(warehouse_id=warehouse_id)
 
     # 재고량 PieChart 데이터
-    quantity_list = [0, 0]
+    quantity_list = [0, 0, 0,0]
     for i in inventories:
         print(i.inventory_quantity)
-        if str(i.barcode.fruit) == '사과':
+        if str(i.barcode.fruit.fruit_name) == "사과상품":
             quantity_list[0] += i.inventory_quantity
-        else:
+        elif str(i.barcode.fruit_id) == "사과중품":
             quantity_list[1] += i.inventory_quantity
+        elif str(i.barcode.fruit_id) == "배상품":
+            quantity_list[2] += i.inventory_quantity
+        else:
+            quantity_list[3] += i.inventory_quantity
 
 
     context = {

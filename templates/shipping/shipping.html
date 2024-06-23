@@ -194,7 +194,6 @@
 <!-- chart script -->
 {% block chart-script %}{% load static %}
 <script>
-  // Python-generated data
   var xValues = ['상품사과','중품사과','상품배','중품배'];
   var yValues = {{ quantity_list|safe }};
   var barColors = ["#FEE7A0","#0067A3",'#2DB400','#FEFD48'];
@@ -208,7 +207,7 @@
           labels: xValues,
           datasets: [{
               data: yValues,
-              backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
+              backgroundColor: barColors.slice(0, xValues.length), 
           }]
       },
       options: {

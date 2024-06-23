@@ -71,7 +71,6 @@
 <script src="{% static 'js/inventory_chart/selling_chart.js' %}"></script>
 <!-- 재고 현황 pie chart -->
 <script>
-  // Python-generated data
   var xValues = ['상품사과','중품사과','상품배','중품배'];
   var yValues = {{ quantities_json|safe }};
   var barColors = ["#FEE7A0","#0067A3",'#2DB400','#FEFD48'];

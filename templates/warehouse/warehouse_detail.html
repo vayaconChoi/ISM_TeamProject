@@ -81,10 +81,9 @@
     <script src="{% static 'js/inventory_chart/selling_chart.js' %}" ></script>
     <!-- 재고 현황 pie chart -->
     <script>
-  // Python-generated data
-  var xValues = ['사과','배'];
+  var xValues = ['상품사과','중품사과','상품배','중품배'];
   var yValues = {{ quantity_list| safe }};
-  var barColors = ["red", "#FEE7A0"];
+  var barColors = ["#FEE7A0","#0067A3",'#2DB400','#FEFD48'];
   var text = "상품현황";
 
   // Pie Chart
@@ -95,7 +94,7 @@
           labels: xValues,
           datasets: [{
               data: yValues,
-              backgroundColor: barColors.slice(0, xValues.length), // Use as many colors as needed
+              backgroundColor: barColors.slice(0, xValues.length), 
           }]
       },
       options: {
