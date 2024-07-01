@@ -121,12 +121,9 @@
 
 <!-- 지도 script 오는 곳 -->
 {% block map-script %}
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-{# JS key#}
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c54c16826dbfd9c1ff4c0a53176f989&libraries=services"></script>
-
-{#Rest key#}
-{#<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7e1f1d062ebb42c94e013e1b52dc2df5&libraries=services"></script>#}
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script type="text/javascript"
+    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f4b249057db3056664e9e0ddda0f0751&libraries=services"></script>
 <script>
     function sample5_execDaumPostcode() {
         new daum.Postcode({
@@ -144,8 +141,8 @@
                         var lng = result[0].x;
 
                         // 위도 경도 값을 hidden input에 넣는다.
-                        document.getElementById("warehouse_latitude").value = lat;
-                        document.getElementById("warehouse_longitude").value = lng;
+                        document.getElementById("origin_latitude").value = lat;
+                        document.getElementById("origin_longitude").value = lng;
                     }
                 });
             }
@@ -311,3 +308,4 @@
     ]);
 </script>
 {% endblock %}
+
