@@ -51,12 +51,12 @@
                                 </div>
                                 <input type="hidden" id="warehouse_latitude" name="warehouse_latitude">
                                 <input type="hidden" id="warehouse_longitude" name="warehouse_longitude">
-<!--                                <div class="row g-3 align-items-center mb-3" style="display:none">-->
-<!--                                    <div class="col-auto">-->
-<!--                                        <label id="warehousing_user" class="form-label"><b>사용자 id</b></label>-->
-<!--                                    </div>-->
-<!--                                    <input type="hidden" name="user" value="{{ request.user.id }}">-->
-<!--                                </div>-->
+                                <div class="row g-3 align-items-center mb-3" style="display:none">
+                                    <div class="col-auto">
+                                        <label id="warehousing_user" class="form-label"><b>사용자 id</b></label>
+                                    </div>
+                                    <input type="hidden" id="user_id" value="{{ request.user.id }}">
+                                </div>
                                 <div class="d-flex flex-row-reverse">
                                     <button type="submit" class="btn btn-success">확인</button>
                                 </div> 
