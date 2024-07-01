@@ -30,7 +30,7 @@
                                 <h5><b>창고 정보</b></h5>
                                 <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
-                                        <label id="warehouse_name" class="form-label"><b>창고 이름</b></label>
+                                        <label for="warehouse-name" class="form-label"><b>창고 이름</b></label>
                                     </div>
                                     <div class="col-auto">
                                         {{ form.warehouse_name }}
@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
-                                        <label id="warehouse_capacity" class="form-label"><b>창고 용량</b></label>
+                                        <label for="warehouse-capa" class="form-label"><b>창고 용량</b></label>
                                     </div>
                                     <div class="col-auto ">
                                         {{ form.warehouse_capacity }}
@@ -53,13 +53,13 @@
                                 <input type="hidden" id="warehouse_longitude" name="warehouse_longitude">
                                 <div class="row g-3 align-items-center mb-3" style="display:none">
                                     <div class="col-auto">
-                                        <label class="form-label"><b>사용자 id</b></label>
+                                        <label for="warehousing_user" class="form-label"><b>사용자 id</b></label>
                                     </div>
-                                    <input type="hidden" id="user_id" value="{{ request.user.id }}">
+                                    <input type="hidden" name="user" value="{{ request.user.id }}">
                                 </div>
                                 <div class="d-flex flex-row-reverse">
                                     <button type="submit" class="btn btn-success">확인</button>
-                                </div> 
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -121,10 +121,12 @@
 
 <!-- 지도 script 오는 곳 -->
 {% block map-script %}
-<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script type="text/javascript"
-        src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f4b249057db3056664e9e0ddda0f0751&libraries=services"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+{# JS key#}
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4b249057db3056664e9e0ddda0f0751&libraries=services"></script>
 
+{#Rest key#}
+{#<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4b249057db3056664e9e0ddda0f0751&libraries=services"></script>#}
 <script>
     function sample5_execDaumPostcode() {
         new daum.Postcode({
@@ -309,4 +311,3 @@
     ]);
 </script>
 {% endblock %}
-
