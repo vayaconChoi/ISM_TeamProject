@@ -26,9 +26,9 @@ def index(request):
 
     # 경매 데이터 가져오기...
     # real 당일 데이터 (From AT_도매시장종합)
-    # auction_data = gonggong.get_live_auction()
+    auction_data = gonggong.get_live_auction()
     print("경매 데이터 가져오기 성공")
-    # print(auction_data) # 다량이라 평시 주석처리
+    print(auction_data) # 다량이라 평시 주석처리
 
     user_id = request.user.id
     user_warehouses = Warehouse.objects.filter(user=user_id)
@@ -37,7 +37,7 @@ def index(request):
     context = {
         "retail_price": retail_price[1],
         "retail_date": retail_price[0],
-        #"auction_data": auction_data,
+        "auction_data": auction_data,
         "user_warehouses": user_warehouses,
         "warehouse_inventory": warehouse_inventory
     }
