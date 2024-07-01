@@ -30,7 +30,7 @@
                                 <h5><b>창고 정보</b></h5>
                                 <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
-                                        <label for="warehouse-name" class="form-label"><b>창고 이름</b></label>
+                                        <label id="warehouse-name" class="form-label"><b>창고 이름</b></label>
                                     </div>
                                     <div class="col-auto">
                                         {{ form.warehouse_name }}
@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="row g-3 align-items-center mb-3">
                                     <div class="col-auto">
-                                        <label for="warehouse-capa" class="form-label"><b>창고 용량</b></label>
+                                        <label id="warehouse-capa" class="form-label"><b>창고 용량</b></label>
                                     </div>
                                     <div class="col-auto ">
                                         {{ form.warehouse_capacity }}
@@ -53,9 +53,9 @@
                                 <input type="hidden" id="warehouse_longitude" name="warehouse_longitude">
                                 <div class="row g-3 align-items-center mb-3" style="display:none">
                                     <div class="col-auto">
-                                        <label for="warehousing_user" class="form-label"><b>사용자 id</b></label>
+                                        <label id="user" class="form-label"><b>사용자 id</b></label>
                                     </div>
-                                    <input type="hidden" name="user" value="{{ request.user.id }}">
+                                    <input type="hidden" id="user_id" name="user" value="{{ request.user.id }}">
                                 </div>
                                 <div class="d-flex flex-row-reverse">
                                     <button type="submit" class="btn btn-success">확인</button>
